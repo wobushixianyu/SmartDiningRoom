@@ -1,0 +1,118 @@
+{
+    "return_code": 200,
+    "message": "成功",
+    "pageCount": 3,
+    "pageIndex": 1,
+    "data": [
+        {
+            "name": "乡村基(天府四街餐厅)",
+            "sales_volume": 3128,
+            "star_level": 4.7,
+            "address": "成都市高新区天府四街66号1栋1层2号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 24,
+            "phone": "13613134567",
+            "img": "http://img1.gtimg.com/cq/pics/hv1/104/207/1894/123210239.jpg"
+        },
+        {
+            "name": "麦当劳软件园店",
+            "sales_volume": 2922,
+            "star_level": 4.7,
+            "address": "天府大道中段801号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 38,
+            "phone": "13613134567",
+            "img": "http://e.hiphotos.baidu.com/nuomi/pic/item/960a304e251f95cad9730eb6ce177f3e6709522f.jpg"
+        },
+        {
+            "name": "古万州大碗菜(银泰城店)",
+            "sales_volume": 2186,
+            "star_level": 4.5,
+            "address": "成都市高新区益州大道中段1999号16栋2层8号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 18,
+            "phone": "13613134567",
+            "img": "http://img.cwq.com/201512/1449915825376683.png"
+        },
+        {
+            "name": "兵哥豌豆面",
+            "sales_volume": 2033,
+            "star_level": 4.5,
+            "address": "天府三街香年广场",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 15,
+            "phone": "13613134567",
+            "img": "http://img1.qunarzz.com/travel/poi/1508/47/8b0d80a9015e02.jpg_r_480x360x95_1f57b0c4.jpg"
+        },
+        {
+            "name": "焖烧大将(银泰城店)",
+            "sales_volume": 1632,
+            "star_level": 4.6,
+            "address": "成都市高新区益州大道中段1999号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 17,
+            "phone": "13613134567",
+            "img": "http://img5.imgtn.bdimg.com/it/u=1070284399,4264671152&fm=27&gp=0.jpg"
+        },
+        {
+            "name": "老铁家的饭（银泰城店）",
+            "sales_volume": 1235,
+            "star_level": 4.9,
+            "address": "成都市高新区益州大道中段1999号8栋2层15号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 19,
+            "phone": "13613134567",
+            "img": "http://f12.baidu.com/it/u=1511592197,1877782317&fm=72"
+        },
+        {
+            "name": "如意鸡汤",
+            "sales_volume": 923,
+            "star_level": 4.6,
+            "address": "成都市高新区天府三街116号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 28,
+            "phone": "13613134567",
+            "img": "http://img2.imgtn.bdimg.com/it/u=2391314611,2250475001&fm=200&gp=0.jpg"
+        },
+        {
+            "name": "寿司兄弟(银泰城店)",
+            "sales_volume": 662,
+            "star_level": 4.8,
+            "address": "益州大道中段1999号负一楼功夫干锅对面",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 17,
+            "phone": "13613134567",
+            "img": "http://f10.baidu.com/it/u=2066042881,3760618387&fm=72"
+        },
+        {
+            "name": "人民食堂(银泰城店)",
+            "sales_volume": 575,
+            "star_level": 4,
+            "address": "成都市高新区吉泰路151号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 27,
+            "phone": "13613134567",
+            "img": "http://img0.imgtn.bdimg.com/it/u=1550346728,3477323024&fm=27&gp=0.jpg"
+        },
+        {
+            "name": "一把骨(银益州大道店)",
+            "sales_volume": 315,
+            "star_level": 4.5,
+            "address": "成都市高新区益州大道南段136/138/140、142号",
+            "latitude": 31.231341,
+            "longitude": 103.323131,
+            "average_price": 29,
+            "phone": "13613134567",
+            "img": "http://img4.imgtn.bdimg.com/it/u=709713800,933950012&fm=27&gp=0.jpg"
+        }
+    ]
+}

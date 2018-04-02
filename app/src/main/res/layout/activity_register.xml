@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    tools:context="com.david.smartdiningroom.mvp.view.activity.RegisterActivity">
+
+    <include layout="@layout/toolbar_layout"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="20dp"
+        >
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="电话号码"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_uName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:inputType="number"
+            android:maxLength="11"
+            />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:text="设置密码（长度为6~16位）"
+            android:textColor="@color/colorPrimary"
+            />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_uPwd"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:inputType="textPassword"
+            android:maxLength="16"
+            />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="确认密码"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            />
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_repeat"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:inputType="textPassword"
+            android:maxLength="16"
+            />
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/login_rectangle_btn_drawable"
+        android:text="立即注册"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        />
+</LinearLayout>
