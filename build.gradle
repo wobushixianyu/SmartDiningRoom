@@ -7,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -29,11 +29,11 @@ task clean(type: Delete) {
 ext{
     compileSdkVersion = 27
     targetSdkVersion = 27
-    minSdkVersion = 18
+    minSdkVersion = 21
 
     versionCode = 1010
     versionName = "1.0.1.0"
     applicationId = "com.david.smartdiningroom"
 
-    support = "27.1.0"
+    support = "27.1.1"
 }

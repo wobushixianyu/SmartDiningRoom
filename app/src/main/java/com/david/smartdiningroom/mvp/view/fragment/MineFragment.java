@@ -9,8 +9,11 @@ import android.view.ViewGroup;
 
 import com.david.smartdiningroom.BaseFragment;
 import com.david.smartdiningroom.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class MineFragment extends BaseFragment{
     @Nullable

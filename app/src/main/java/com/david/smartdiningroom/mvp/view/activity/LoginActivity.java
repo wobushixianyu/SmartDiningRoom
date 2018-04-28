@@ -69,8 +69,8 @@ public class LoginActivity extends BaseActivity implements LoginView{
 
     @Override
     public void showFailedMsg(String msg) {
-        Timber.i("======>failedMsg:"+msg);
-        Snackbar.make(mContainer,msg,Snackbar.LENGTH_SHORT).show();
+//        Snackbar.make(mContainer,msg,Snackbar.LENGTH_SHORT).show();
+        JumpUtils.JumpActivity(this,MainActivity.class,new Bundle(),true);
     }
 
     @OnClick({R.id.btn_login,R.id.qq_login,R.id.tv_forgetPwd,R.id.weChat_login,R.id.tv_register})

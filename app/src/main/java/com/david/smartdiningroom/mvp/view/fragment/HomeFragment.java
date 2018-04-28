@@ -96,6 +96,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
                 },1500);
             }
         });
+
+
     }
 
     private void setupStoreClasss(Bundle savedInstanceState) {
