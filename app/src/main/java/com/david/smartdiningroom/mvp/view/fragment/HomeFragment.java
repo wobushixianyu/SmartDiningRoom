@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.david.smartdiningroom.BaseFragment;
 import com.david.smartdiningroom.R;
@@ -23,6 +24,7 @@ import com.david.smartdiningroom.mvp.presenter.HomeFragmentPresenter;
 import com.david.smartdiningroom.mvp.view.HomeFragmentView;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
+import com.david.smartdiningroom.widget.HomePageHeaderView;
 import com.david.smartdiningroom.widget.scroll.EndlessRecyclerViewScrollListener;
 import com.david.smartdiningroom.widget.scroll.ProgressItem;
 import com.google.gson.Gson;
@@ -40,7 +42,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeFragment extends BaseFragment implements HomeFragmentView {
+public class HomeFragment extends BaseFragment implements HomeFragmentView, HomePageHeaderView.OnSliderClickListener {
 
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -57,6 +59,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     private ItemAdapter footerAdapter;
     private FastAdapter mFastAdapter;
     private ItemAdapter<StoreBeanClasss> itemAdapter;
+    private ItemAdapter<HomePageHeaderView> headerAdapter;
 
     @Nullable
     @Override
@@ -102,9 +105,10 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
 
     private void setupStoreClasss(Bundle savedInstanceState) {
         mPresenter = HomeFragmentPresenter.getInstance(this);
+        headerAdapter = new ItemAdapter<>();
         itemAdapter = new ItemAdapter<>();
         footerAdapter = new ItemAdapter();
-        mFastAdapter = FastAdapter.with(Arrays.asList(itemAdapter, footerAdapter));
+        mFastAdapter = FastAdapter.with(Arrays.asList(headerAdapter,itemAdapter, footerAdapter));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -158,6 +162,8 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
         JsonArray data = jsonObject.get("data").getAsJsonArray();
         List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data,new TypeToken<List<StoreBeanClasss>>(){}.getType());
         setData(storeBeanClassses,!isLoadMore);
+        headerAdapter.clear();
+        headerAdapter.add(new HomePageHeaderView(getContext(),this));
     }
 
     private void setData(List<StoreBeanClasss> storeBeanClassses, boolean isRefresh) {
@@ -214,5 +220,10 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView {
     @Override
     public void setupWaitingDialog(boolean show) {
 
+    }
+
+    @Override
+    public void onSliderClick() {
+        Toast.makeText(getContext(), "banner", Toast.LENGTH_SHORT).show();
     }
 }

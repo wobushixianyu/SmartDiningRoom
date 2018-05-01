@@ -1,7 +1,6 @@
 package com.david.smartdiningroom;
 
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,13 +8,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import com.david.smartdiningroom.mvp.view.fragment.ClassifyFragment;
 import com.david.smartdiningroom.mvp.view.fragment.HomeFragment;
 import com.david.smartdiningroom.mvp.view.fragment.MineFragment;
-import com.david.smartdiningroom.mvp.view.fragment.OrderFragment;
 import com.david.smartdiningroom.utils.WeakHandler;
 
 import butterknife.BindView;

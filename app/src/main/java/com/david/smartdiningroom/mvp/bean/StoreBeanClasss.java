@@ -10,6 +10,7 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.david.smartdiningroom.R;
 import com.mikepenz.fastadapter.items.AbstractItem;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class StoreBeanClasss extends AbstractItem<StoreBeanClasss,StoreBeanClass
     @Override
     public void bindView(ViewHolder holder, List<Object> payloads) {
         super.bindView(holder, payloads);
-        Glide.with(holder.view).load(getImg()).into(holder.mStoreImg);
+        Picasso.with(holder.view.getContext()).load(getImg()).into(holder.mStoreImg);
         holder.mStoreName.setText(getName());
         holder.mStoreInfo.setText("评价 " + getStar_level() + " 丨 " + "月售 " + getSales_volume() + " 丨 " + "人均 ¥" + getAverage_price());
         holder.mStoreAddress.setText("地址：" + getAddress());
@@ -147,6 +148,7 @@ public class StoreBeanClasss extends AbstractItem<StoreBeanClasss,StoreBeanClass
     public int getLayoutRes() {
         return R.layout.item_store_list_layout;
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         protected View view;
