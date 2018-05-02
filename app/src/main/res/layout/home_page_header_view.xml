@@ -5,20 +5,16 @@
     android:layout_height="180dp"
     android:orientation="vertical">
 
-
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider_banner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-    </com.daimajia.slider.library.SliderLayout>
+        android:layout_height="match_parent" />
 
     <com.daimajia.slider.library.Indicators.PagerIndicator
         android:id="@+id/pager_indicator"
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:gravity="center"
-        android:background="@android:color/transparent"
         android:layout_alignParentBottom="true"
-        />
+        android:background="@android:color/transparent"
+        android:gravity="center" />
 </RelativeLayout>

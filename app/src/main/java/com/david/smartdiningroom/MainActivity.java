@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.david.smartdiningroom.mvp.view.fragment.ClassifyFragment;
 import com.david.smartdiningroom.mvp.view.fragment.HomeFragment;
@@ -58,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
             hindFragment();
             transaction.show(mineFragment);
-        } else if (type == PageType.classify){
-            if (classifyFragment == null){
+        } else if (type == PageType.classify) {
+            if (classifyFragment == null) {
                 classifyFragment = new ClassifyFragment();
                 transaction.add(R.id.fragment_container, classifyFragment);
             }
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 setupFragment(PageType.classify);
                 return true;
             case R.id.navigation_mine:
-                mToolbar.setTitle(getString(R.string.toolbar_title_mine));
+                mToolbar.setTitle("");
                 setupFragment(PageType.mine);
                 return true;
         }

@@ -79,9 +79,9 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
                 pageIndex = 1;
                 params.put("sortMethod", sortMethod);
                 params.put("pageIndex", pageIndex);
-                mPresenter.getStoreList(getContext(),params,false);
+                mPresenter.getStoreList(getContext(), params, false);
             }
-        },1500);
+        }, 1500);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -94,9 +94,9 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
                         pageIndex = 1;
                         params.put("sortMethod", sortMethod);
                         params.put("pageIndex", pageIndex);
-                        mPresenter.getStoreList(getContext(),params,false);
+                        mPresenter.getStoreList(getContext(), params, false);
                     }
-                },1500);
+                }, 1500);
             }
         });
 
@@ -108,14 +108,14 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
         headerAdapter = new ItemAdapter<>();
         itemAdapter = new ItemAdapter<>();
         footerAdapter = new ItemAdapter();
-        mFastAdapter = FastAdapter.with(Arrays.asList(headerAdapter,itemAdapter, footerAdapter));
+        mFastAdapter = FastAdapter.with(Arrays.asList(headerAdapter, itemAdapter, footerAdapter));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        Drawable drawable = ContextCompat.getDrawable(getContext(),R.drawable.recycler_divider);
-        if (drawable != null){
-            DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL);
+        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.recycler_divider);
+        if (drawable != null) {
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
             itemDecoration.setDrawable(drawable);
             mRecyclerView.addItemDecoration(itemDecoration);
         }
@@ -139,7 +139,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
                                     pageIndex++;
                                     params.put("sortMethod", sortMethod);
                                     params.put("pageIndex", pageIndex);
-                                    mPresenter.getStoreList(getContext(),params,true);
+                                    mPresenter.getStoreList(getContext(), params, true);
                                 }
                             }, 1500);
                         }
@@ -156,29 +156,30 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
 
     @Override
     public void onGetStoreListSuccess(JsonObject jsonObject, boolean isLoadMore) {
-        if (!isLoadMore){
+        if (!isLoadMore) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
         JsonArray data = jsonObject.get("data").getAsJsonArray();
-        List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data,new TypeToken<List<StoreBeanClasss>>(){}.getType());
-        setData(storeBeanClassses,!isLoadMore);
+        List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data, new TypeToken<List<StoreBeanClasss>>() {
+        }.getType());
+        setData(storeBeanClassses, !isLoadMore);
         headerAdapter.clear();
-        headerAdapter.add(new HomePageHeaderView(getContext(),this));
+        headerAdapter.add(new HomePageHeaderView(getContext(), this));
     }
 
     private void setData(List<StoreBeanClasss> storeBeanClassses, boolean isRefresh) {
         int size = storeBeanClassses != null ? storeBeanClassses.size() : 0;
-        if (isRefresh){
-            if (size != 0){
+        if (isRefresh) {
+            if (size != 0) {
                 itemAdapter.clear();
                 itemAdapter.add(storeBeanClassses);
-            }else {
+            } else {
                 showMessage("暂无数据");
             }
-        }else {
-            if (size != 0){
+        } else {
+            if (size != 0) {
                 itemAdapter.add(storeBeanClassses);
-            }else {
+            } else {
                 footerAdapter.clear();
                 endlessRecyclerViewScrollListener.resetState(false);
                 showMessage("暂无更多数据");
@@ -203,7 +204,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
     public void showMessage(String msg) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         final AlertDialog dialog = builder.create();
-        if (!dialog.isShowing()){
+        if (!dialog.isShowing()) {
             builder.setMessage(msg);
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
@@ -212,7 +213,7 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
                 }
             });
             builder.show();
-        }else {
+        } else {
             dialog.dismiss();
         }
     }
@@ -225,5 +226,10 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
     @Override
     public void onSliderClick() {
         Toast.makeText(getContext(), "banner", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

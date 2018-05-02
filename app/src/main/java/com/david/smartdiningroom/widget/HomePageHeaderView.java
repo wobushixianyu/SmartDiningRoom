@@ -58,7 +58,7 @@ public class HomePageHeaderView extends AbstractItem<HomePageHeaderView, HomePag
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 
