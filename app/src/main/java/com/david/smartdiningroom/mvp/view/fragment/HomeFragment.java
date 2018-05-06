@@ -1,6 +1,7 @@
 package com.david.smartdiningroom.mvp.view.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,9 +20,11 @@ import android.widget.Toast;
 
 import com.david.smartdiningroom.BaseFragment;
 import com.david.smartdiningroom.R;
+import com.david.smartdiningroom.mvp.bean.ShopDetailsClasss;
 import com.david.smartdiningroom.mvp.bean.StoreBeanClasss;
 import com.david.smartdiningroom.mvp.presenter.HomeFragmentPresenter;
 import com.david.smartdiningroom.mvp.view.HomeFragmentView;
+import com.david.smartdiningroom.mvp.view.activity.ShopDetailsActivity;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
 import com.david.smartdiningroom.widget.HomePageHeaderView;
@@ -32,7 +35,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -99,8 +105,6 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
                 }, 1500);
             }
         });
-
-
     }
 
     private void setupStoreClasss(Bundle savedInstanceState) {
@@ -148,6 +152,17 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
 
             }
         };
+
+        mFastAdapter.withOnClickListener(new OnClickListener() {
+            @Override
+            public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
+                StoreBeanClasss beanClasss = itemAdapter.getAdapterItem(position - 1);
+                Intent intent = new Intent(getContext(), ShopDetailsActivity.class);
+                intent.putExtra("storeId",beanClasss.getId());
+                startActivity(intent);
+                return false;
+            }
+        });
 
         mRecyclerView.addOnScrollListener(endlessRecyclerViewScrollListener);
 

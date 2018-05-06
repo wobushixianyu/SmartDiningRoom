@@ -7,7 +7,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
 import com.david.smartdiningroom.R;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.squareup.picasso.Picasso;
@@ -17,21 +16,23 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StoreBeanClasss extends AbstractItem<StoreBeanClasss,StoreBeanClasss.ViewHolder>{
+public class StoreBeanClasss extends AbstractItem<StoreBeanClasss, StoreBeanClasss.ViewHolder> {
 
 
     /**
-     * name : 乡村基(天府四街餐厅)
-     * sales_volume : 3128
-     * star_level : 4.7
-     * address : 成都市高新区天府四街66号1栋1层2号
+     * id : 1008
+     * name : 寿司兄弟(银泰城店)
+     * sales_volume : 662
+     * star_level : 4.8
+     * address : 益州大道中段1999号负一楼功夫干锅对面
      * latitude : 31.231341
      * longitude : 103.323131
-     * average_price : 24
+     * average_price : 17
      * phone : 13613134567
-     * img : http://img1.gtimg.com/cq/pics/hv1/104/207/1894/123210239.jpg
+     * img : http://f10.baidu.com/it/u=2066042881,3760618387&fm=72
      */
 
+    private int id;
     private String name;
     private int sales_volume;
     private double star_level;
@@ -41,6 +42,14 @@ public class StoreBeanClasss extends AbstractItem<StoreBeanClasss,StoreBeanClass
     private int average_price;
     private String phone;
     private String img;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -149,8 +158,7 @@ public class StoreBeanClasss extends AbstractItem<StoreBeanClasss,StoreBeanClass
         return R.layout.item_store_list_layout;
     }
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         protected View view;
         @BindView(R.id.store_img)
         AppCompatImageView mStoreImg;
@@ -163,7 +171,7 @@ public class StoreBeanClasss extends AbstractItem<StoreBeanClasss,StoreBeanClass
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
             this.view = itemView;
         }
     }

@@ -14,7 +14,7 @@ public class SdrUtils {
 
     public static JsonObject readAssets(Context context,String fileName){
         try {
-            InputStream inputStream = context.getAssets().open("storeSalesPage1.txt");
+            InputStream inputStream = context.getAssets().open(fileName);
             byte[] bytes = new byte[inputStream.available()];
             inputStream.read(bytes);
             return new Gson().fromJson(new String(bytes,"utf-8"),JsonObject.class);
