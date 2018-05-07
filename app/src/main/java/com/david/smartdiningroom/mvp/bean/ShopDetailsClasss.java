@@ -3,11 +3,13 @@ package com.david.smartdiningroom.mvp.bean;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.david.smartdiningroom.R;
+import com.google.gson.annotations.Expose;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.mikepenz.fastadapter.listeners.ClickEventHook;
@@ -32,6 +34,7 @@ public class ShopDetailsClasss extends AbstractItem<ShopDetailsClasss, ShopDetai
     private String name;
     private String img;
     private double price;
+    @Expose(serialize = false) private int num = 0;
 
     public int getId() {
         return id;
@@ -110,8 +113,13 @@ public class ShopDetailsClasss extends AbstractItem<ShopDetailsClasss, ShopDetai
         Picasso.with(holder.view.getContext()).load(getImg()).into(holder.mImgFood);
         holder.mTvName.setText(getName());
         holder.mTvPrice.setText("¥："+getPrice());
+        holder.mTvNum.setText(""+num);
         holder.mIvAdd.setTag(holder);
         holder.mIvReduce.setTag(holder);
+        if (num > 0){
+            holder.mIvReduce.setVisibility(View.VISIBLE);
+            holder.mTvNum.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -120,6 +128,11 @@ public class ShopDetailsClasss extends AbstractItem<ShopDetailsClasss, ShopDetai
         holder.mImgFood.setImageResource(R.mipmap.img_load_error);
         holder.mTvName.setText("");
         holder.mTvPrice.setText("");
+        holder.mTvNum.setText("");
+        holder.mIvAdd.setTag("");
+        holder.mIvReduce.setTag("");
+        holder.mIvReduce.setVisibility(View.INVISIBLE);
+        holder.mTvNum.setVisibility(View.INVISIBLE);
     }
 
     public static class onAddReduceClickEvent extends ClickEventHook<ShopDetailsClasss>{
@@ -133,27 +146,51 @@ public class ShopDetailsClasss extends AbstractItem<ShopDetailsClasss, ShopDetai
         @Override
         public List<View> onBindMany(RecyclerView.ViewHolder viewHolder) {
             if (viewHolder instanceof ShopDetailsClasss.ViewHolder) {
+                ((ViewHolder) viewHolder).mIvAdd.setTag(viewHolder);
+                ((ViewHolder) viewHolder).mIvAdd.setTag(viewHolder);
                 return EventHookUtil.toList(((ViewHolder) viewHolder).mIvAdd,((ViewHolder) viewHolder).mIvReduce);
             }
             return super.onBindMany(viewHolder);
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         public void onClick(View v, int position, FastAdapter<ShopDetailsClasss> fastAdapter, ShopDetailsClasss item) {
-            final ViewHolder viewHolder = (ViewHolder) v.getTag();
-            switch (v.getId()){
-                case R.id.iv_add:
-                    listener.onAddClick(viewHolder.mTvNum,viewHolder.mIvAdd,viewHolder.mIvReduce,item.getPrice(),item.getId());
-                    break;
-                case R.id.iv_reduce:
-                    listener.onReduceClick(viewHolder.mTvNum,viewHolder.mIvAdd,viewHolder.mIvReduce,item.getPrice(),item.getId());
-                    break;
+            if (v.getTag() instanceof ViewHolder){
+                ViewHolder holder = (ViewHolder) v.getTag();
+                switch (v.getId()){
+                    case R.id.iv_add:
+                        item.num++;
+                        holder.mTvNum.setText(""+item.num);
+                        if (item.num > 0){
+                            holder.mTvNum.setVisibility(View.VISIBLE);
+                            holder.mIvReduce.setVisibility(View.VISIBLE);
+                        }else {
+                            holder.mTvNum.setVisibility(View.INVISIBLE);
+                            holder.mIvReduce.setVisibility(View.INVISIBLE);
+                        }
+                        listener.onAddClick(item.getPrice(),item.getId());
+                        break;
+                    case R.id.iv_reduce:
+                        item.num--;
+                        holder.mTvNum.setText(""+item.num);
+                        if (item.num <= 0){
+                            holder.mTvNum.setText("0");
+                            holder.mTvNum.setVisibility(View.INVISIBLE);
+                            holder.mIvReduce.setVisibility(View.INVISIBLE);
+                        }else {
+                            holder.mTvNum.setVisibility(View.VISIBLE);
+                            holder.mIvReduce.setVisibility(View.VISIBLE);
+                        }
+                        listener.onReduceClick(item.getPrice(),item.getId());
+                        break;
+                }
             }
         }
     }
 
     public interface OnItemClickListener{
-        void onAddClick(TextView tv_num,ImageView imgAdd,ImageView imgReduce,double price,int id);
-        void onReduceClick(TextView tv_num,ImageView imgAdd,ImageView imgReduce,double price,int id);
+        void onAddClick(double price,int id);
+        void onReduceClick(double price,int id);
     }
 }

@@ -1,30 +1,23 @@
-package com.david.smartdiningroom.mvp.view.fragment;
+package com.david.smartdiningroom.mvp.view.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
-import com.david.smartdiningroom.BaseFragment;
 import com.david.smartdiningroom.R;
+import com.david.smartdiningroom.mvp.bean.EvaluateClasss;
 import com.david.smartdiningroom.mvp.bean.StoreBeanClasss;
-import com.david.smartdiningroom.mvp.presenter.HomeFragmentPresenter;
-import com.david.smartdiningroom.mvp.view.HomeFragmentView;
-import com.david.smartdiningroom.mvp.view.activity.ShopDetailsActivity;
-import com.david.smartdiningroom.utils.AppManager;
+import com.david.smartdiningroom.mvp.view.fragment.HomeFragment2;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
 import com.david.smartdiningroom.widget.HomePageHeaderView;
@@ -35,16 +28,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mikepenz.fastadapter.FastAdapter;
-import com.mikepenz.fastadapter.IAdapter;
-import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
-import com.mikepenz.fastadapter.listeners.OnClickListener;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -57,32 +44,31 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.OnSliderClickListener {
+import static java.security.AccessController.getContext;
 
+public class EvaluateListActivity extends AppCompatActivity {
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolBar;
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
-
-    private Map<String, Object> params = new HashMap<>();
-    private static final String SALES_VOLUME = "1001";
-    private static final String STAR_LEVEL = "1002";
-    private String sortMethod = SALES_VOLUME;
-    private int pageIndex = 1;
-    private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
+    private ItemAdapter<EvaluateClasss> itemAdapter;
     private ItemAdapter footerAdapter;
     private FastAdapter mFastAdapter;
-    private ItemAdapter<StoreBeanClasss> itemAdapter;
-    private ItemAdapter<HomePageHeaderView> headerAdapter;
+    private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
+    private int pageIndex = 1;
+    private Context mContext = this;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home_fragment_layout, container, false);
-        ButterKnife.bind(this, view);
-        setupStoreClasss(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_evaluate_list);
+        ButterKnife.bind(this);
+        mToolBar.setTitle("用户评价");
+        setUpEvaluateClasss(savedInstanceState);
         initView();
-        return view;
     }
 
     private void initView() {
@@ -91,8 +77,6 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
             @Override
             public void run() {
                 pageIndex = 1;
-                params.put("sortMethod", sortMethod);
-                params.put("pageIndex", pageIndex);
                 getHttpData(false);
             }
         }, 1500);
@@ -106,8 +90,6 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
                         System.out.println("======>onRefresh");
                         footerAdapter.clear();
                         pageIndex = 1;
-                        params.put("sortMethod", sortMethod);
-                        params.put("pageIndex", pageIndex);
                         getHttpData(false);
                     }
                 }, 1500);
@@ -117,18 +99,17 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
 
     }
 
-    private void setupStoreClasss(Bundle savedInstanceState) {
-        headerAdapter = new ItemAdapter<>();
+    private void setUpEvaluateClasss(Bundle savedInstanceState) {
         itemAdapter = new ItemAdapter<>();
         footerAdapter = new ItemAdapter();
-        mFastAdapter = FastAdapter.with(Arrays.asList(headerAdapter, itemAdapter, footerAdapter));
+        mFastAdapter = FastAdapter.with(Arrays.asList(itemAdapter,footerAdapter));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.recycler_divider);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.recycler_divider);
         if (drawable != null) {
-            DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
             itemDecoration.setDrawable(drawable);
             mRecyclerView.addItemDecoration(itemDecoration);
         }
@@ -150,92 +131,25 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
                                 public void run() {
                                     System.out.println("======>onLoadMore");
                                     pageIndex++;
-                                    params.put("sortMethod", sortMethod);
-                                    params.put("pageIndex", pageIndex);
                                     getHttpData(true);
                                 }
                             }, 1500);
                         }
                     }, 300);
                 }
-
             }
         };
-
-        mFastAdapter.withOnClickListener(new OnClickListener() {
-            @Override
-            public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
-                StoreBeanClasss beanClasss = itemAdapter.getAdapterItem(position - 1);
-                Map<String,Serializable> params = new HashMap<>();
-                params.put("storeId",beanClasss.getId());
-                AppManager.jump(ShopDetailsActivity.class,params);
-                return false;
-            }
-        });
 
         mRecyclerView.addOnScrollListener(endlessRecyclerViewScrollListener);
 
         mFastAdapter.saveInstanceState(savedInstanceState);
     }
 
-    private void setData(List<StoreBeanClasss> storeBeanClassses, boolean isRefresh) {
-        int size = storeBeanClassses != null ? storeBeanClassses.size() : 0;
-        if (isRefresh) {
-            if (size != 0) {
-                itemAdapter.clear();
-                itemAdapter.add(storeBeanClassses);
-            } else {
-                showMessage("暂无数据");
-            }
-        } else {
-            if (size != 0) {
-                itemAdapter.add(storeBeanClassses);
-            } else {
-                footerAdapter.clear();
-                endlessRecyclerViewScrollListener.resetState(false);
-            }
-        }
-    }
-
-    private void showMessage(String msg) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        final AlertDialog dialog = builder.create();
-        if (!dialog.isShowing()) {
-            builder.setMessage(msg);
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
-        } else {
-            dialog.dismiss();
-        }
-    }
-
-    @Override
-    public void onSliderClick() {
-        Toast.makeText(getContext(), "banner", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        System.out.println("======>onDestroy");
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mFastAdapter.saveInstanceState(outState);
-    }
-
-    private void getHttpData(final boolean isLoadMore){
+    private void getHttpData(final boolean isLoadMore) {
         Observable.create(new ObservableOnSubscribe<JsonObject>() {
             @Override
             public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
-                JsonObject jsonObject = SdrUtils.readAssets(Objects.requireNonNull(getContext()), "storeSalesPage1.txt");
+                JsonObject jsonObject = SdrUtils.readAssets(Objects.requireNonNull(mContext), "evaluate_list.txt");
                 System.out.println("======>jsonObject:"+jsonObject);
                 emitter.onNext(jsonObject);
                 emitter.onComplete();
@@ -254,12 +168,13 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
                         if (!isLoadMore) {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
-                        JsonArray data = jsonObject.get("data").getAsJsonArray();
-                        List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data, new TypeToken<List<StoreBeanClasss>>() {
+                        JsonObject data = jsonObject.get("data").getAsJsonObject();
+                        String countNum = data.get("count_num").getAsString();
+                        mToolBar.setTitle("用户评价("+countNum+")");
+                        JsonArray list = data.get("list").getAsJsonArray();
+                        List<EvaluateClasss> mEvaluateClasss = new Gson().fromJson(list, new TypeToken<List<EvaluateClasss>>() {
                         }.getType());
-                        setData(storeBeanClassses, !isLoadMore);
-                        headerAdapter.clear();
-                        headerAdapter.add(new HomePageHeaderView(getContext(), HomeFragment2.this));
+                        setData(mEvaluateClasss, !isLoadMore);
                     }
 
                     @Override
@@ -275,5 +190,41 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
+    }
+
+    private void setData(List<EvaluateClasss> mEvaluateClasss, boolean isRefresh) {
+        int size = mEvaluateClasss != null ? mEvaluateClasss.size() : 0;
+        if (isRefresh) {
+            if (size != 0) {
+                itemAdapter.clear();
+                itemAdapter.add(mEvaluateClasss);
+            } else {
+                showMessage("暂无数据");
+            }
+        } else {
+            if (size != 0) {
+                itemAdapter.add(mEvaluateClasss);
+            } else {
+                footerAdapter.clear();
+                endlessRecyclerViewScrollListener.resetState(false);
+            }
+        }
+    }
+
+    private void showMessage(String msg) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        final AlertDialog dialog = builder.create();
+        if (!dialog.isShowing()) {
+            builder.setMessage(msg);
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        } else {
+            dialog.dismiss();
+        }
     }
 }

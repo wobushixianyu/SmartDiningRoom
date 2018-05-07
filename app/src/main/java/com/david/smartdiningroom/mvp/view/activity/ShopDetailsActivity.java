@@ -2,21 +2,23 @@ package com.david.smartdiningroom.mvp.view.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.ShopDetailsClasss;
+import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -55,7 +57,6 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     @BindView(R.id.count_price)
     TextView mTvCountPrice;
     private ItemAdapter<ShopDetailsClasss> itemAdapter;
-    private FastAdapter mFastAdapter;
     private double countPrice = 0;
     private Context mContext = this;
 
@@ -70,7 +71,7 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
 
     private void setUpShopDetailsClasss(Bundle savedInstanceState) {
         itemAdapter = new ItemAdapter<>();
-        mFastAdapter = FastAdapter.with(itemAdapter);
+        FastAdapter mFastAdapter = FastAdapter.with(itemAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -90,7 +91,7 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     private void getHttpData() {
         Observable.create(new ObservableOnSubscribe<JsonObject>() {
             @Override
-            public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
+            public void subscribe(ObservableEmitter<JsonObject> emitter){
                 JsonObject jsonObject = SdrUtils.readAssets(mContext, "shop_details_data.txt");
                 System.out.println("======>jsonObject:"+jsonObject);
                 emitter.onNext(jsonObject);
@@ -129,48 +130,58 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
                 });
     }
 
-    @OnClick({R.id.btn_sure})
+    @OnClick({R.id.btn_sure,R.id.tv_evaluate})
     public void onClick(View view){
         switch (view.getId()){
             case R.id.btn_sure:
+                makeSureOrder();
+                break;
+            case R.id.tv_evaluate:
+                AppManager.jump(EvaluateListActivity.class);
                 break;
         }
     }
 
+    private void makeSureOrder() {
+        if (countPrice > 0){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("确认订单");
+            builder.setMessage("当前订单总价为:"+countPrice+"\n是否确认提交当前订单?");
+            builder.setCancelable(false);
+            final AlertDialog dialog = builder.create();
+            builder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialog.dismiss();
+                    commitOrder();
+                }
+            });
+            builder.show();
+        }else {
+            SdrUtils.showToast(mContext,"您还没有选择食物");
+        }
+    }
+
+    private void commitOrder() {
+
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
-    public void onAddClick(TextView tv_num, ImageView imgAdd, ImageView imgReduce, double price, int id) {
-        if (TextUtils.isEmpty(tv_num.getText().toString())){
-            tv_num.setText("0");
-        }
-        int num = Integer.parseInt(tv_num.getText().toString());
-        num++;
-        tv_num.setText(""+num);
-        if (num > 0){
-            tv_num.setVisibility(View.VISIBLE);
-            imgReduce.setVisibility(View.VISIBLE);
-        }else {
-            tv_num.setVisibility(View.INVISIBLE);
-            imgReduce.setVisibility(View.INVISIBLE);
-        }
+    public void onAddClick(double price, int id) {
         countPrice += price;
         mTvCountPrice.setText("¥："+countPrice);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onReduceClick(TextView tv_num, ImageView imgAdd, ImageView imgReduce, double price, int id) {
-        int num = Integer.parseInt(tv_num.getText().toString());
-        num--;
-        tv_num.setText(""+num);
-        if (num <= 0){
-            tv_num.setText("0");
-            tv_num.setVisibility(View.INVISIBLE);
-            imgReduce.setVisibility(View.INVISIBLE);
-        }else {
-            tv_num.setVisibility(View.VISIBLE);
-            imgReduce.setVisibility(View.VISIBLE);
-        }
+    public void onReduceClick(double price, int id) {
         countPrice -= price;
         mTvCountPrice.setText("¥："+countPrice);
     }

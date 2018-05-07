@@ -2,6 +2,7 @@ package com.david.smartdiningroom.mvp.view.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,7 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import timber.log.Timber;
 
 public class MineFragment extends BaseFragment {
 
@@ -50,6 +50,10 @@ public class MineFragment extends BaseFragment {
             case R.id.tv_coupon:
                 break;
             case R.id.tv_service:
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                Uri uri = Uri.parse("tel:"+10086);
+                intent.setData(uri);
+                startActivity(intent);
                 break;
             case R.id.tv_logout:
                 logout();
@@ -58,28 +62,24 @@ public class MineFragment extends BaseFragment {
     }
 
     private void logout() {
-        Timber.e("======>MainActivity:"+getActivity().getTaskId());
-        if (dialog != null && !dialog.isShowing()) {
-            dialog.show();
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
-            builder.setTitle("提示");
-            builder.setMessage("确定要注销当前账号，并退出APP吗？");
-            dialog = builder.create();
-            builder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                }
-            });
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialog.dismiss();
-                    AppManager.jumpAndFinish(LoginActivity.class);
-                }
-            });
-            builder.show();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
+        builder.setTitle("提示");
+        builder.setMessage("确定要注销当前账号，并退出APP吗？");
+        builder.setCancelable(false);
+        dialog = builder.create();
+        builder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialog.dismiss();
+                AppManager.jumpAndFinish(LoginActivity.class);
+            }
+        });
+        builder.show();
     }
 }

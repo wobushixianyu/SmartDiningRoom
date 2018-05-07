@@ -29,7 +29,8 @@
         <activity
             android:name=".mvp.view.activity.RegisterActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".mvp.view.activity.ShopDetailsActivity"></activity>
+        <activity android:name=".mvp.view.activity.ShopDetailsActivity" />
+        <activity android:name=".mvp.view.activity.EvaluateListActivity"></activity>
     </application>
 
 </manifest>
