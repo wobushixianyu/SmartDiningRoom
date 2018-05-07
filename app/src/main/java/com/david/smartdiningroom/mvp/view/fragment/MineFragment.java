@@ -14,11 +14,15 @@ import android.widget.TextView;
 import com.david.smartdiningroom.BaseFragment;
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.view.activity.LoginActivity;
+import com.david.smartdiningroom.utils.AppManager;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import timber.log.Timber;
 
 public class MineFragment extends BaseFragment {
 
@@ -53,13 +57,15 @@ public class MineFragment extends BaseFragment {
         }
     }
 
-    private void logout(){
-        if (dialog != null && !dialog.isShowing()){
+    private void logout() {
+        Timber.e("======>MainActivity:"+getActivity().getTaskId());
+        if (dialog != null && !dialog.isShowing()) {
             dialog.show();
-        }else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
             builder.setTitle("提示");
             builder.setMessage("确定要注销当前账号，并退出APP吗？");
+            dialog = builder.create();
             builder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -69,15 +75,11 @@ public class MineFragment extends BaseFragment {
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    getActivity().startActivity(intent);
-                    getActivity().finish();
+                    dialog.dismiss();
+                    AppManager.jumpAndFinish(LoginActivity.class);
                 }
             });
-            dialog = builder.create();
-            dialog.show();
+            builder.show();
         }
     }
 }

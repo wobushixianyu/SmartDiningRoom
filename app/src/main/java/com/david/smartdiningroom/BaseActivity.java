@@ -1,10 +1,16 @@
 package com.david.smartdiningroom;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
+
+
+import timber.log.Timber;
 
 
 @SuppressLint("Registered")
@@ -31,5 +37,31 @@ public class BaseActivity extends AppCompatActivity {
 
     public void dismissWaitingDialog(){
 
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Timber.e("*****onCreate()方法******");
+        Timber.e("onCreate：" + getClass().getSimpleName() + " TaskId: " + getTaskId() + " hasCode:" + this.hashCode());
+        dumpTaskAffinity();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Timber.e("*****onNewIntent()方法*****");
+        Timber.e("onNewIntent：" + getClass().getSimpleName() + " TaskId: " + getTaskId() + " hasCode:" + this.hashCode());
+        dumpTaskAffinity();
+    }
+
+    protected void dumpTaskAffinity(){
+        try {
+            ActivityInfo info = this.getPackageManager()
+                    .getActivityInfo(getComponentName(), PackageManager.GET_META_DATA);
+            Timber.e("taskAffinity:"+info.taskAffinity);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

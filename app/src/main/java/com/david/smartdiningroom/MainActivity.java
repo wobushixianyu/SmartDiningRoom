@@ -5,30 +5,30 @@ import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.david.smartdiningroom.mvp.view.fragment.ClassifyFragment;
-import com.david.smartdiningroom.mvp.view.fragment.HomeFragment;
+import com.david.smartdiningroom.mvp.view.fragment.HomeFragment2;
 import com.david.smartdiningroom.mvp.view.fragment.MineFragment;
 import com.david.smartdiningroom.utils.WeakHandler;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     private FragmentTransaction transaction;
-    private HomeFragment homeFragment;
-    private MineFragment mineFragment;
     private ClassifyFragment classifyFragment;
+    private MineFragment mineFragment;
+    private final FragmentManager manager = getSupportFragmentManager();
+    private HomeFragment2 homeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     //设置要展示的fragment
     private void setupFragment(PageType type) {
-        transaction = getSupportFragmentManager().beginTransaction();
+        transaction = manager.beginTransaction();
         if (type == PageType.home) {
             if (homeFragment == null) {
-                homeFragment = new HomeFragment();
+                homeFragment = new HomeFragment2();
                 transaction.add(R.id.fragment_container, homeFragment);
             }
             hindFragment();
@@ -120,5 +120,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Snackbar.make(navigation, "再次点击[返回]键退出程序", Snackbar.LENGTH_SHORT).show();
         }
         mBackPressedTime = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        transaction = null;
     }
 }

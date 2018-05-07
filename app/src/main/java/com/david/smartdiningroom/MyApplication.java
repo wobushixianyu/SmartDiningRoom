@@ -2,6 +2,8 @@ package com.david.smartdiningroom;
 
 import android.app.Application;
 
+import com.david.smartdiningroom.utils.AppManager;
+
 import java.lang.ref.WeakReference;
 
 import timber.log.Timber;
@@ -17,6 +19,7 @@ public class MyApplication extends Application{
     public void onCreate() {
         super.onCreate();
         mApplication = new WeakReference<>(this);
+        AppManager.getInstance().init(mApplication.get());
         if (BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
     }
 }
