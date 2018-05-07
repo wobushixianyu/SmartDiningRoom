@@ -216,7 +216,7 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
 
     @Override
     public void onSliderClick() {
-        Toast.makeText(getContext(), "banner", Toast.LENGTH_SHORT).show();
+        SdrUtils.showToast(getContext(),"banner");
     }
 
     @Override

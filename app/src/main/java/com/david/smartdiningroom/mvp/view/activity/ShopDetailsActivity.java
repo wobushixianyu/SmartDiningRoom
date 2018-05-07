@@ -169,7 +169,10 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     }
 
     private void commitOrder() {
-
+        SdrUtils.showToast(mContext,"提交订单成功");
+        countPrice = 0;
+        mTvCountPrice.setText("");
+        getHttpData();
     }
 
     @SuppressLint("SetTextI18n")
