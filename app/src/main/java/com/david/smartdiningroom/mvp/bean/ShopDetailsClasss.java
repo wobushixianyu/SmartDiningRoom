@@ -20,6 +20,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ShopDetailsClasss extends AbstractItem<ShopDetailsClasss, ShopDetailsClasss.ViewHolder> {
 
@@ -87,7 +88,7 @@ public class ShopDetailsClasss extends AbstractItem<ShopDetailsClasss, ShopDetai
     public class ViewHolder extends RecyclerView.ViewHolder {
         protected View view;
         @BindView(R.id.img_food)
-        ImageView mImgFood;
+        CircleImageView mImgFood;
         @BindView(R.id.tv_name)
         TextView mTvName;
         @BindView(R.id.tv_price)

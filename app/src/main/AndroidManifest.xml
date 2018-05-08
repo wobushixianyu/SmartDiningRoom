@@ -30,7 +30,9 @@
             android:name=".mvp.view.activity.RegisterActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".mvp.view.activity.ShopDetailsActivity" />
-        <activity android:name=".mvp.view.activity.EvaluateListActivity"></activity>
+        <activity android:name=".mvp.view.activity.EvaluateListActivity" />
+        <activity android:name=".mvp.view.activity.MyOrderActivity" />
+        <activity android:name=".mvp.view.activity.OrderEvaluateActivity"></activity>
     </application>
 
 </manifest>

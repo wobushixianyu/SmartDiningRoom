@@ -1,0 +1,47 @@
+{
+    "return_code": 200,
+    "message": "成功",
+    "data": {
+		"pageIndex":1,
+		"countPage":3,
+		"pageSize":10,
+        "list": [
+            {
+                "order_id": "201804241104abc0101",
+				"time":1524539083000,
+				"shop_id":1001,
+				"img":"http://img1.gtimg.com/cq/pics/hv1/104/207/1894/123210239.jpg",
+				"shop_name":"乡村基(天府四街餐厅)",
+				"price":27.0,
+				"status":1
+            },
+            {
+                "order_id": "201804241104abc0101",
+				"time":1524539083000,
+				"shop_id":1001,
+				"img":"http://e.hiphotos.baidu.com/nuomi/pic/item/960a304e251f95cad9730eb6ce177f3e6709522f.jpg",
+				"shop_name":"麦当劳软件园店",
+				"price":56.0,
+				"status":2
+            },
+            {
+                "order_id": "201804241104abc0101",
+				"time":1524539083000,
+				"shop_id":1001,
+				"img":"http://img.cwq.com/201512/1449915825376683.png",
+				"shop_name":"古万州大碗菜(银泰城店)",
+				"price":88.0,
+				"status":3
+            },
+            {
+               "order_id": "201804241104abc0101",
+				"time":1524539083000,
+				"shop_id":1001,
+				"img":"http://img1.qunarzz.com/travel/poi/1508/47/8b0d80a9015e02.jpg_r_480x360x95_1f57b0c4.jpg",
+				"shop_name":"兵哥豌豆面",
+				"price":16.0,
+				"status":4
+            }
+        ]
+    }
+}

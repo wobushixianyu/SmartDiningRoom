@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.david.smartdiningroom.BaseFragment;
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.view.activity.LoginActivity;
+import com.david.smartdiningroom.mvp.view.activity.MyOrderActivity;
 import com.david.smartdiningroom.utils.AppManager;
 
 import java.util.Objects;
@@ -46,6 +47,7 @@ public class MineFragment extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_order:
+                AppManager.jump(MyOrderActivity.class);
                 break;
             case R.id.tv_coupon:
                 break;
