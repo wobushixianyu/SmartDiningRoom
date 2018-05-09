@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">智能餐厅</string>
     <string name="text_login">登录</string>
-    <string name="text_other_login_method">其它登录方式</string>
+    <string name="text_other_login_method">请选择登录角色</string>
     <string name="label_register">新用户注册</string>
     <string name="forget_pwd">忘记密码?</string>
     <string name="user_name">用户名</string>
@@ -19,4 +19,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_seller_main">SellerMainActivity</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

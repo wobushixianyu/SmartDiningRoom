@@ -1,11 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@android:color/white"
     tools:context=".mvp.view.activity.OrderEvaluateActivity">
 
     <include layout="@layout/toolbar_layout"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="15dp"
+        android:padding="10dp"
+        android:hint="(#^.^#)请在此留下您珍贵的评价(100字以内)"
+        android:gravity="start"
+        android:textSize="14sp"
+        android:maxLength="100"
+        android:background="@drawable/edit_text_frame"
+        android:textColor="@color/text_color"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="用餐评分:"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/text_color"
+            android:textSize="16sp"
+            />
+
+        <ImageButton
+            android:id="@+id/btn01"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:background="@mipmap/ic_smile_gray"
+            />
+
+        <ImageButton
+            android:id="@+id/btn02"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:background="@mipmap/ic_smile_gray"
+            />
+
+        <ImageButton
+            android:id="@+id/btn03"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:background="@mipmap/ic_smile_gray"
+            />
+
+        <ImageButton
+            android:id="@+id/btn04"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:background="@mipmap/ic_smile_gray"
+            />
+
+        <ImageButton
+            android:id="@+id/btn05"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:background="@mipmap/ic_smile_gray"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_commit"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login_rectangle_btn_drawable"
+        android:text="提交"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        />
 
 </LinearLayout>

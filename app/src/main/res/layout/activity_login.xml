@@ -93,7 +93,8 @@
         android:layout_marginTop="10dp"
         android:padding="5dp"
         android:text="@string/forget_pwd"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_login"
@@ -129,27 +130,42 @@
             android:background="@android:color/darker_gray" />
     </LinearLayout>
 
-    <LinearLayout
+    <RadioGroup
+        android:id="@+id/rgp_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/qq_login"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <RadioButton
+            android:id="@+id/customer_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:src="@mipmap/qq_icon" />
+            android:button="@null"
+            android:checked="true"
+            android:drawablePadding="5dp"
+            android:drawableTop="@drawable/customer_login_selector"
+            android:gravity="center"
+            android:text="客户版"
+            android:textColor="@color/gray"
+            android:textSize="12sp" />
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/weChat_login"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <RadioButton
+            android:id="@+id/seller_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:src="@mipmap/wechat_icon" />
-    </LinearLayout>
+            android:button="@null"
+            android:drawablePadding="5dp"
+            android:drawableTop="@drawable/seller_login_selector"
+            android:gravity="center"
+            android:text="商家版"
+            android:textColor="@color/gray"
+            android:textSize="12sp" />
+    </RadioGroup>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tv_register"
