@@ -17,6 +17,8 @@ import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.view.activity.LoginActivity;
 import com.david.smartdiningroom.mvp.view.activity.MyOrderActivity;
 import com.david.smartdiningroom.utils.AppManager;
+import com.david.smartdiningroom.utils.ContentsUtils;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.Objects;
 
@@ -79,6 +81,8 @@ public class MineFragment extends BaseFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialog.dismiss();
+                Hawk.put(ContentsUtils.LOGIN_SUCCESS,false);
+                Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD,"");
                 AppManager.jumpAndFinish(LoginActivity.class);
             }
         });

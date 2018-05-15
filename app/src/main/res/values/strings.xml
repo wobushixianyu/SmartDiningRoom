@@ -11,6 +11,8 @@
     <string name="title_classify">分类</string>
     <string name="title_order">订单</string>
     <string name="title_mine">我的</string>
+    <string name="title_count">统计</string>
+    <string name="title_evaluate">评论</string>
 
     <string name="toolbar_title_home">智能餐厅</string>
     <string name="toolbar_title_classify">菜品分类</string>

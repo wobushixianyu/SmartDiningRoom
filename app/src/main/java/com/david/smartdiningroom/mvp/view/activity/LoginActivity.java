@@ -20,6 +20,7 @@ import com.david.smartdiningroom.mvp.view.LoginView;
 import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.ContentsUtils;
 import com.david.smartdiningroom.utils.SdrUtils;
+import com.orhanobut.hawk.Hawk;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,8 +42,6 @@ public class LoginActivity extends BaseActivity implements LoginView {
     RadioButton mSellerLogin;
     private LoginPresenter mPresenter;
     private Context mContext = this;
-    private int loginType = 0; //客户版0，商家版1
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +59,23 @@ public class LoginActivity extends BaseActivity implements LoginView {
                 switch (checkedId){
                     case R.id.customer_login:
                         SdrUtils.showToast(mContext,"客户版");
-                        loginType = 0;
+                        Hawk.put(ContentsUtils.LOGIN_TYPE,0);
                         break;
                     case R.id.seller_login:
                         SdrUtils.showToast(mContext,"商家版");
-                        loginType = 1;
+                        Hawk.put(ContentsUtils.LOGIN_TYPE,1);
                         break;
                 }
             }
         });
+
+        mEtName.setText(Hawk.get(ContentsUtils.CUSTOMER_LOGIN_NAME,""));
+        mEtPwd.setText(Hawk.get(ContentsUtils.CUSTOMER_LOGIN_PWD,""));
+
+        //自动登录
+        if (Hawk.get(ContentsUtils.LOGIN_SUCCESS,false)){
+            mPresenter.login();
+        }
     }
 
     @Override
@@ -93,9 +100,14 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     @Override
     public void showSuccessMsg(UserBean userBean) {
-        ContentsUtils.userName = getUserName();
-        ContentsUtils.userPwd = getPassWord();
-        AppManager.jumpAndFinish(MainActivity.class);
+        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_NAME,getUserName());
+        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD,getPassWord());
+        Hawk.put(ContentsUtils.LOGIN_SUCCESS,true);
+        if (Hawk.get(ContentsUtils.LOGIN_TYPE,0) == 0){
+            AppManager.jumpAndFinish(MainActivity.class);
+        }else {
+            AppManager.jumpAndFinish(SellerMainActivity.class);
+        }
     }
 
     @Override
@@ -107,11 +119,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
-                if (loginType == 0){
-                    mPresenter.login();
-                }else {
-                    AppManager.jump(SellerMainActivity.class);
-                }
+                mPresenter.login();
                 break;
             case R.id.tv_register:
                 AppManager.jump(RegisterActivity.class);

@@ -3,6 +3,7 @@ package com.david.smartdiningroom;
 import android.app.Application;
 
 import com.david.smartdiningroom.utils.AppManager;
+import com.orhanobut.hawk.Hawk;
 
 import java.lang.ref.WeakReference;
 
@@ -21,5 +22,7 @@ public class MyApplication extends Application{
         mApplication = new WeakReference<>(this);
         AppManager.getInstance().init(mApplication.get());
         if (BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
+
+        Hawk.init(this).build();
     }
 }
