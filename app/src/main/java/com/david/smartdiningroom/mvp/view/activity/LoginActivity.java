@@ -73,7 +73,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
         mEtPwd.setText(Hawk.get(ContentsUtils.CUSTOMER_LOGIN_PWD,""));
 
         //自动登录
-        if (Hawk.get(ContentsUtils.LOGIN_SUCCESS,false)){
+        if (Hawk.get(ContentsUtils.LOGIN_SUCCESS,false) && Hawk.get(ContentsUtils.LOGIN_TYPE,0) == 0){
             mPresenter.login();
         }
     }
@@ -101,11 +101,13 @@ public class LoginActivity extends BaseActivity implements LoginView {
     @Override
     public void showSuccessMsg(UserBean userBean) {
         Hawk.put(ContentsUtils.CUSTOMER_LOGIN_NAME,getUserName());
-        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD,getPassWord());
-        Hawk.put(ContentsUtils.LOGIN_SUCCESS,true);
         if (Hawk.get(ContentsUtils.LOGIN_TYPE,0) == 0){
+            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD,getPassWord());
+            Hawk.put(ContentsUtils.LOGIN_SUCCESS,true);
             AppManager.jumpAndFinish(MainActivity.class);
         }else {
+            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD,"");
+            Hawk.put(ContentsUtils.LOGIN_SUCCESS,false);
             AppManager.jumpAndFinish(SellerMainActivity.class);
         }
     }
