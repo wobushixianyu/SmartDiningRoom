@@ -59,7 +59,7 @@ public class SellerEvaluateFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.seller_evaluate_fragment_layout,container);
+        View view = inflater.inflate(R.layout.seller_evaluate_fragment_layout,container,false);
         ButterKnife.bind(this,view);
         setUpEvaluateClasss(savedInstanceState);
         initView();

@@ -53,27 +53,35 @@ public class LoginActivity extends BaseActivity implements LoginView {
     }
 
     private void initView() {
+        int loginType = Hawk.get(ContentsUtils.LOGIN_TYPE, 0);
+
+        if (loginType == 0) {
+            mCustomerLogin.setChecked(true);
+        } else {
+            mSellerLogin.setChecked(true);
+        }
+
         mRgpLogin.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.customer_login:
-                        SdrUtils.showToast(mContext,"客户版");
-                        Hawk.put(ContentsUtils.LOGIN_TYPE,0);
+                        SdrUtils.showToast(mContext, "客户版");
+                        Hawk.put(ContentsUtils.LOGIN_TYPE, 0);
                         break;
                     case R.id.seller_login:
-                        SdrUtils.showToast(mContext,"商家版");
-                        Hawk.put(ContentsUtils.LOGIN_TYPE,1);
+                        SdrUtils.showToast(mContext, "商家版");
+                        Hawk.put(ContentsUtils.LOGIN_TYPE, 1);
                         break;
                 }
             }
         });
 
-        mEtName.setText(Hawk.get(ContentsUtils.CUSTOMER_LOGIN_NAME,""));
-        mEtPwd.setText(Hawk.get(ContentsUtils.CUSTOMER_LOGIN_PWD,""));
+        mEtName.setText(Hawk.get(ContentsUtils.CUSTOMER_LOGIN_NAME, ""));
+        mEtPwd.setText(Hawk.get(ContentsUtils.CUSTOMER_LOGIN_PWD, ""));
 
         //自动登录
-        if (Hawk.get(ContentsUtils.LOGIN_SUCCESS,false) && Hawk.get(ContentsUtils.LOGIN_TYPE,0) == 0){
+        if (Hawk.get(ContentsUtils.LOGIN_SUCCESS, false) && loginType == 0) {
             mPresenter.login();
         }
     }
@@ -100,21 +108,21 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     @Override
     public void showSuccessMsg(UserBean userBean) {
-        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_NAME,getUserName());
-        if (Hawk.get(ContentsUtils.LOGIN_TYPE,0) == 0){
-            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD,getPassWord());
-            Hawk.put(ContentsUtils.LOGIN_SUCCESS,true);
+        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_NAME, getUserName());
+        if (Hawk.get(ContentsUtils.LOGIN_TYPE, 0) == 0) {
+            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD, getPassWord());
+            Hawk.put(ContentsUtils.LOGIN_SUCCESS, true);
             AppManager.jumpAndFinish(MainActivity.class);
-        }else {
-            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD,"");
-            Hawk.put(ContentsUtils.LOGIN_SUCCESS,false);
+        } else {
+            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD, "");
+            Hawk.put(ContentsUtils.LOGIN_SUCCESS, false);
             AppManager.jumpAndFinish(SellerMainActivity.class);
         }
     }
 
     @Override
     public void showFailedMsg(String msg) {
-        Snackbar.make(mContainer,msg,Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mContainer, msg, Snackbar.LENGTH_SHORT).show();
     }
 
     @OnClick({R.id.btn_login, R.id.tv_forgetPwd, R.id.tv_register})

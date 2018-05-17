@@ -13,9 +13,11 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.MyOrderClasss;
+import com.david.smartdiningroom.mvp.bean.SellerOrderClasss;
 import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
@@ -26,7 +28,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.IAdapter;
+import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -133,6 +138,20 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
         };
 
         mRecyclerView.addOnScrollListener(endlessRecyclerViewScrollListener);
+
+        mFastAdapter.withOnClickListener(new OnClickListener() {
+            @Override
+            public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
+                MyOrderClasss adapterItem = itemAdapter.getAdapterItem(position);
+                Map<String,Serializable> params = new HashMap<>();
+                params.put("orderId",adapterItem.getOrder_id());
+                params.put("isSeller",false);
+                params.put("status",adapterItem.getStatus());
+                params.put("price",adapterItem.getPrice());
+                AppManager.jump(OrderDetailsActivity.class,params);
+                return false;
+            }
+        });
 
         mFastAdapter.withEventHook(new MyOrderClasss.OnEvaluateClickListener(this));
 

@@ -35,7 +35,8 @@
         <activity android:name=".mvp.view.activity.OrderEvaluateActivity" />
         <activity
             android:name=".mvp.view.activity.SellerMainActivity"
-            android:label="@string/title_activity_seller_main"></activity>
+            android:label="@string/title_activity_seller_main" />
+        <activity android:name=".mvp.view.activity.OrderDetailsActivity"></activity>
     </application>
 
 </manifest>

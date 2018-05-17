@@ -36,8 +36,7 @@ public class SellerMainActivity extends AppCompatActivity implements BottomNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_main);
         ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
-        mToolbar.setTitle(getString(R.string.app_name));
+        mToolbar.setTitle(getString(R.string.title_order));
         navigation.setOnNavigationItemSelectedListener(this);
 
         setupFragment(PageType.order);
@@ -82,12 +81,15 @@ public class SellerMainActivity extends AppCompatActivity implements BottomNavig
         switch (item.getItemId()) {
             case R.id.navigation_order:
                 mToolbar.setTitle(getString(R.string.title_order));
+                setupFragment(PageType.order);
                 return true;
             case R.id.navigation_count:
                 mToolbar.setTitle(getString(R.string.title_count));
+                setupFragment(PageType.count);
                 return true;
             case R.id.navigation_evaluate:
                 mToolbar.setTitle(getString(R.string.title_evaluate));
+                setupFragment(PageType.evaluate);
                 return true;
         }
         return false;
