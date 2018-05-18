@@ -197,8 +197,7 @@ public class SellerEvaluateFragment extends Fragment{
         apiManager.getEvaluationList(params).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
             public void onSuccess(JsonObject jsonObject) {
-                JsonObject data = jsonObject.get("data").getAsJsonObject();
-                JsonArray list = data.get("list").getAsJsonArray();
+                JsonArray list = jsonObject.get("list").getAsJsonArray();
                 List<EvaluateClasss> mEvaluateClasss = new Gson().fromJson(list, new TypeToken<List<EvaluateClasss>>() {
                 }.getType());
                 setData(mEvaluateClasss, !isLoadMore);

@@ -209,7 +209,7 @@ public class MyOrderClasss extends AbstractItem<MyOrderClasss,MyOrderClasss.View
 
         @Override
         public void onClick(View v, int position, FastAdapter<MyOrderClasss> fastAdapter, MyOrderClasss item) {
-            listener.onEvaluateClick(item.getId(),item.getId());
+            listener.onEvaluateClick(item.getId(),item.getShop_id());
         }
     }
 

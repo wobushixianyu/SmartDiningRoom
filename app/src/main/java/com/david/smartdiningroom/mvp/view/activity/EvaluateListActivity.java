@@ -209,10 +209,9 @@ public class EvaluateListActivity extends AppCompatActivity {
         apiManager.getEvaluationList(params).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
             public void onSuccess(JsonObject jsonObject) {
-                JsonObject data = jsonObject.get("data").getAsJsonObject();
-                String countNum = data.get("count_num").getAsString();
+                String countNum = jsonObject.get("totalRow").getAsString();
                 mToolBar.setTitle("用户评价("+countNum+")");
-                JsonArray list = data.get("list").getAsJsonArray();
+                JsonArray list = jsonObject.get("list").getAsJsonArray();
                 List<EvaluateClasss> mEvaluateClasss = new Gson().fromJson(list, new TypeToken<List<EvaluateClasss>>() {
                 }.getType());
                 setData(mEvaluateClasss, !isLoadMore);

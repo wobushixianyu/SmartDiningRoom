@@ -126,6 +126,7 @@ public class OrderEvaluateActivity extends AppCompatActivity {
         json.addProperty("content",mEtContent.getText().toString());
         json.addProperty("score",shopScore);
         json.addProperty("shop_id",shopId);
+        System.out.println("======>json:"+json.toString());
         apiManager.submitEvaluation(json.toString()).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
             public void onSuccess(JsonObject jsonObject) {
