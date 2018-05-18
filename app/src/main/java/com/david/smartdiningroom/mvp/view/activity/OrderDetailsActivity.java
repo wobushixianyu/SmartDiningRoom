@@ -30,7 +30,9 @@ import com.google.gson.reflect.TypeToken;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,7 +59,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private ItemAdapter<OrderDetailsClasss> itemAdapter;
     private FastAdapter mFastAdapter;
     private Context mContext = this;
-    private String orderId;
+    private int orderId;
     private int status;
     private ApiManager apiManager;
 
@@ -78,7 +80,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         boolean isSeller = intent.getBooleanExtra("isSeller", false);
         status = intent.getIntExtra("status", 0);
-        orderId = intent.getStringExtra("orderId");
+        orderId = intent.getIntExtra("orderId",0);
         double price = intent.getDoubleExtra("price", 0);
         mTvPrice.setText(String.valueOf(price));
         if (isSeller) {
@@ -146,7 +148,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     }
 
     private void getHttpData() {
-        Observable.create(new ObservableOnSubscribe<JsonObject>() {
+        /*Observable.create(new ObservableOnSubscribe<JsonObject>() {
             @Override
             public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
                 JsonObject jsonObject = SdrUtils.readAssets(mContext, "order_details_json.txt");
@@ -180,7 +182,28 @@ public class OrderDetailsActivity extends AppCompatActivity {
                     public void onComplete() {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                });
+                });*/
+        Map<String,Object> params = new HashMap<>();
+        params.put("order_id",orderId);
+        apiManager.getOrderDetails(params).subscribe(new SubscriberCallBack<JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject jsonObject) {
+                JsonArray data = jsonObject.get("data").getAsJsonArray();
+                List<OrderDetailsClasss> mOrderDetailsClasss = new Gson().fromJson(data, new TypeToken<List<OrderDetailsClasss>>() {
+                }.getType());
+                setData(mOrderDetailsClasss);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onCompleted() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void setData(List<OrderDetailsClasss> mOrderDetailsClasss) {

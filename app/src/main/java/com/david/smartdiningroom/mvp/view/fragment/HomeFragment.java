@@ -158,7 +158,6 @@ public class HomeFragment extends BaseFragment implements HomeFragmentView, Home
             public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
                 StoreBeanClasss beanClasss = itemAdapter.getAdapterItem(position - 1);
                 Intent intent = new Intent(getContext(), ShopDetailsActivity.class);
-                intent.putExtra("storeId",beanClasss.getId());
                 startActivity(intent);
                 return false;
             }

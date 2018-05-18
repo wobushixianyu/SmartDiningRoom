@@ -18,6 +18,8 @@ import android.view.View;
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.MyOrderClasss;
 import com.david.smartdiningroom.mvp.bean.SellerOrderClasss;
+import com.david.smartdiningroom.remote.ApiManager;
+import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
@@ -63,12 +65,17 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
     private FastAdapter mFastAdapter;
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
     private Context mContext = this;
+    private ApiManager apiManager;
+    private int pageIndex = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_order);
         ButterKnife.bind(this);
+
+        apiManager = new ApiManager();
+
         mToolBar.setTitle("我的订单");
         setUpMyOrderClasss(savedInstanceState);
         initView();
@@ -144,7 +151,7 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
             public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
                 MyOrderClasss adapterItem = itemAdapter.getAdapterItem(position);
                 Map<String,Serializable> params = new HashMap<>();
-                params.put("orderId",adapterItem.getOrder_id());
+                params.put("orderId",adapterItem.getId());
                 params.put("isSeller",false);
                 params.put("status",adapterItem.getStatus());
                 params.put("price",adapterItem.getPrice());
@@ -159,7 +166,7 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
     }
 
     private void getHttpData(final boolean isLoadMore) {
-        Observable.create(new ObservableOnSubscribe<JsonObject>() {
+        /*Observable.create(new ObservableOnSubscribe<JsonObject>() {
             @Override
             public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
                 JsonObject jsonObject = SdrUtils.readAssets(mContext, "my_order_list.txt");
@@ -200,7 +207,41 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
                         endlessRecyclerViewScrollListener.resetState(false);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                });
+                });*/
+        if (isLoadMore){
+            pageIndex++;
+        }else {
+            pageIndex = 1;
+        }
+        Map<String,Object> params = new HashMap<>();
+        params.put("shop_id",0);
+        params.put("user_id",1);
+        params.put("pageIndex",pageIndex);
+        apiManager.getOrderList(params).subscribe(new SubscriberCallBack<JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject jsonObject) {
+                if (!isLoadMore) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+                JsonArray list = jsonObject.get("list").getAsJsonArray();
+                List<MyOrderClasss> mMyOrderClasss = new Gson().fromJson(list, new TypeToken<List<MyOrderClasss>>() {
+                }.getType());
+                setData(mMyOrderClasss, !isLoadMore);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                endlessRecyclerViewScrollListener.resetState(false);
+                footerAdapter.clear();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onCompleted() {
+                endlessRecyclerViewScrollListener.resetState(false);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void setData(List<MyOrderClasss> mMyOrderClasss, boolean isRefresh) {

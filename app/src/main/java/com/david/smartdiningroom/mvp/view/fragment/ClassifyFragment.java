@@ -22,9 +22,12 @@ import com.david.smartdiningroom.BaseFragment;
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.StoreBeanClasss;
 import com.david.smartdiningroom.mvp.view.activity.ShopDetailsActivity;
+import com.david.smartdiningroom.remote.ApiManager;
+import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
+import com.david.smartdiningroom.widget.HomePageHeaderView;
 import com.david.smartdiningroom.widget.scroll.EndlessRecyclerViewScrollListener;
 import com.david.smartdiningroom.widget.scroll.ProgressItem;
 import com.google.gson.Gson;
@@ -72,12 +75,15 @@ public class ClassifyFragment extends BaseFragment {
     private ItemAdapter footerAdapter;
     private FastAdapter mFastAdapter;
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
+    private ApiManager apiManager;
+    private int pageIndex = 1;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.classify_fragment_layout, container, false);
         ButterKnife.bind(this, view);
+        apiManager = new ApiManager();
         setUpStoreBeanClasss(savedInstanceState);
         initView();
         return view;
@@ -129,7 +135,10 @@ public class ClassifyFragment extends BaseFragment {
             public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
                 StoreBeanClasss beanClasss = itemAdapter.getAdapterItem(position);
                 Map<String, Serializable> params = new HashMap<>();
-                params.put("storeId", beanClasss.getId());
+                params.put("shopId",beanClasss.getShop_id());
+                params.put("shopName",beanClasss.getName());
+                params.put("shopAddress",beanClasss.getAddress());
+                params.put("shopLogo",beanClasss.getImg());
                 AppManager.jump(ShopDetailsActivity.class, params);
                 return false;
             }
@@ -147,7 +156,7 @@ public class ClassifyFragment extends BaseFragment {
                 if (isChecked) {
                     mRbtStirFry.setChecked(false);
                     mRbtHotPot.setChecked(false);
-                    type = 0;
+                    type = 1;
                     getHttpData(false);
                 }
             }
@@ -159,7 +168,7 @@ public class ClassifyFragment extends BaseFragment {
                 if (isChecked) {
                     mRbtFastFood.setChecked(false);
                     mRbtHotPot.setChecked(false);
-                    type = 1;
+                    type = 2;
                     getHttpData(false);
                 }
             }
@@ -171,7 +180,7 @@ public class ClassifyFragment extends BaseFragment {
                 if (isChecked) {
                     mRbtFastFood.setChecked(false);
                     mRbtStirFry.setChecked(false);
-                    type = 2;
+                    type = 3;
                     getHttpData(false);
                 }
             }
@@ -208,7 +217,7 @@ public class ClassifyFragment extends BaseFragment {
                     mRbtFastFood.setChecked(true);
                     mRbtStirFry.setChecked(false);
                     mRbtHotPot.setChecked(false);
-                    type = 0;
+                    type = 1;
                 }
                 break;
             case R.id.ll_stir_fry:
@@ -216,7 +225,7 @@ public class ClassifyFragment extends BaseFragment {
                     mRbtFastFood.setChecked(false);
                     mRbtStirFry.setChecked(true);
                     mRbtHotPot.setChecked(false);
-                    type = 1;
+                    type = 2;
                 }
                 break;
             case R.id.ll_hot_pot:
@@ -224,54 +233,47 @@ public class ClassifyFragment extends BaseFragment {
                     mRbtFastFood.setChecked(false);
                     mRbtStirFry.setChecked(false);
                     mRbtHotPot.setChecked(true);
-                    type = 2;
+                    type = 3;
                 }
                 break;
         }
     }
 
     private void getHttpData(final boolean isLoadMore) {
-        Observable.create(new ObservableOnSubscribe<JsonObject>() {
+        if (isLoadMore){
+            pageIndex++;
+        }else {
+            pageIndex = 1;
+        }
+
+        Map<String,Object> params = new HashMap<>();
+        params.put("pageIndex",pageIndex);
+        params.put("type",type);
+        apiManager.getStoreList(params).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
-            public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
-                JsonObject jsonObject = SdrUtils.readAssets(Objects.requireNonNull(getContext()), "storeSalesPage1.txt");
-                System.out.println("======>jsonObject:" + jsonObject);
-                emitter.onNext(jsonObject);
-                emitter.onComplete();
+            public void onSuccess(JsonObject jsonObject) {
+                if (!isLoadMore) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+                JsonArray data = jsonObject.get("list").getAsJsonArray();
+                List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data, new TypeToken<List<StoreBeanClasss>>() {
+                }.getType());
+                setData(storeBeanClassses, !isLoadMore);
             }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JsonObject>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
 
-                    }
+            @Override
+            public void onFailure(Throwable t) {
+                endlessRecyclerViewScrollListener.resetState(false);
+                footerAdapter.clear();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
 
-                    @Override
-                    public void onNext(JsonObject jsonObject) {
-                        if (!isLoadMore) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                        JsonArray data = jsonObject.get("data").getAsJsonArray();
-                        List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data, new TypeToken<List<StoreBeanClasss>>() {
-                        }.getType());
-                        setData(storeBeanClassses, !isLoadMore);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        footerAdapter.clear();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+            @Override
+            public void onCompleted() {
+                endlessRecyclerViewScrollListener.resetState(false);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void setData(List<StoreBeanClasss> storeBeanClassses, boolean isRefresh) {

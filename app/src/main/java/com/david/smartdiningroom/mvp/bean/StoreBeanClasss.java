@@ -18,9 +18,8 @@ import butterknife.ButterKnife;
 
 public class StoreBeanClasss extends AbstractItem<StoreBeanClasss, StoreBeanClasss.ViewHolder> {
 
-
     /**
-     * id : 1008
+     * shop_id : 1008
      * name : 寿司兄弟(银泰城店)
      * sales_volume : 662
      * star_level : 4.8
@@ -32,7 +31,7 @@ public class StoreBeanClasss extends AbstractItem<StoreBeanClasss, StoreBeanClas
      * img : http://f10.baidu.com/it/u=2066042881,3760618387&fm=72
      */
 
-    private int id;
+    private int shop_id;
     private String name;
     private int sales_volume;
     private double star_level;
@@ -43,12 +42,12 @@ public class StoreBeanClasss extends AbstractItem<StoreBeanClasss, StoreBeanClas
     private String phone;
     private String img;
 
-    public int getId() {
-        return id;
+    public int getShop_id() {
+        return shop_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setShop_id(int shop_id) {
+        this.shop_id = shop_id;
     }
 
     public String getName() {

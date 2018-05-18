@@ -3,6 +3,7 @@ package com.david.smartdiningroom.mvp.view.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.ShopDetailsClasss;
+import com.david.smartdiningroom.remote.ApiManager;
+import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.google.gson.Gson;
@@ -28,7 +31,9 @@ import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,14 +64,34 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     private ItemAdapter<ShopDetailsClasss> itemAdapter;
     private double countPrice = 0;
     private Context mContext = this;
+    private int shopId;
+    private ApiManager apiManager;
+    private int[] dishesNum;
+    private JsonArray arrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_details);
         ButterKnife.bind(this);
+
+        apiManager = new ApiManager();
+
         setUpShopDetailsClasss(savedInstanceState);
+        initView();
         getHttpData();
+    }
+
+    private void initView() {
+        Intent intent = getIntent();
+        shopId = intent.getIntExtra("shopId", 0);
+        String shopName = intent.getStringExtra("shopName");
+        String shopAddress = intent.getStringExtra("shopAddress");
+        String shopLogo = intent.getStringExtra("shopLogo");
+
+        Picasso.with(mContext).load(shopLogo).into(mIvLogo);
+        mTvName.setText(shopName);
+        mTvAddress.setText(shopAddress);
     }
 
     private void setUpShopDetailsClasss(Bundle savedInstanceState) {
@@ -89,45 +114,38 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     }
 
     private void getHttpData() {
-        Observable.create(new ObservableOnSubscribe<JsonObject>() {
+        Map<String,Object> params = new HashMap<>();
+        params.put("shop_id",shopId);
+        apiManager.getShopDetails(params).subscribe(new SubscriberCallBack<JsonArray>() {
             @Override
-            public void subscribe(ObservableEmitter<JsonObject> emitter){
-                JsonObject jsonObject = SdrUtils.readAssets(mContext, "shop_details_data.txt");
-                System.out.println("======>jsonObject:"+jsonObject);
-                emitter.onNext(jsonObject);
-                emitter.onComplete();
+            public void onSuccess(JsonArray jsonArray) {
+                arrayList = jsonArray;
+                List<ShopDetailsClasss> shopDetailsClasss = new Gson().fromJson(jsonArray, new TypeToken<List<ShopDetailsClasss>>() {
+                }.getType());
+                initArray(jsonArray);
+                itemAdapter.clear();
+                itemAdapter.add(shopDetailsClasss);
             }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JsonObject>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
 
-                    }
+            @Override
+            public void onFailure(Throwable t) {
 
-                    @Override
-                    public void onNext(JsonObject jsonObject) {
-                        JsonObject data = jsonObject.get("data").getAsJsonObject();
-                        Picasso.with(mContext).load(data.get("img").getAsString()).into(mIvLogo);
-                        mTvName.setText(data.get("name").getAsString());
-                        mTvAddress.setText(data.get("address").getAsString());
-                        JsonArray list = data.get("list").getAsJsonArray();
-                        List<ShopDetailsClasss> shopDetailsClasss = new Gson().fromJson(list, new TypeToken<List<ShopDetailsClasss>>() {
-                        }.getType());
-                        itemAdapter.clear();
-                        itemAdapter.add(shopDetailsClasss);
-                    }
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                    }
+            @Override
+            public void onCompleted() {
 
-                    @Override
-                    public void onComplete() {
-                    }
-                });
+            }
+        });
+
+    }
+
+    //初始化菜单各个菜品的选择数量，初始化每个菜品选择为0
+    private void initArray(JsonArray jsonArray) {
+        dishesNum = new int[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            dishesNum[i] = 0;
+        }
     }
 
     @OnClick({R.id.btn_sure,R.id.tv_evaluate})
@@ -169,10 +187,48 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     }
 
     private void commitOrder() {
-        SdrUtils.showToast(mContext,"提交订单成功");
-        countPrice = 0;
-        mTvCountPrice.setText("");
-        getHttpData();
+        JsonObject json = initParams(arrayList);
+        apiManager.submitOrder(json.toString()).subscribe(new SubscriberCallBack<JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject jsonObject) {
+                if (jsonObject.get("return_code").getAsInt() == 200){
+                    SdrUtils.showToast(mContext,"提交订单成功");
+                    countPrice = 0;
+                    mTvCountPrice.setText("");
+                    getHttpData();
+                }else {
+                    SdrUtils.showToast(mContext,"提交订单失败");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.e(t);
+                SdrUtils.showToast(mContext,"提交订单失败");
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+    }
+
+    private JsonObject initParams(JsonArray arrayList) {
+        JsonObject json = new JsonObject();
+        json.addProperty("shop_id",1);
+        json.addProperty("price",countPrice);
+        json.addProperty("user_id",1);
+        JsonArray menu = new JsonArray();
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (dishesNum[i] != 0){
+                JsonObject item = arrayList.get(i).getAsJsonObject();
+                item.addProperty("num",dishesNum[i]);
+                menu.add(item);
+            }
+        }
+        json.add("menu",menu);
+        return json;
     }
 
     @SuppressLint("SetTextI18n")
@@ -180,6 +236,7 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     public void onAddClick(double price, int id) {
         countPrice += price;
         mTvCountPrice.setText("¥："+countPrice);
+        dishesNum[id]++;
     }
 
     @SuppressLint("SetTextI18n")
@@ -187,5 +244,6 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
     public void onReduceClick(double price, int id) {
         countPrice -= price;
         mTvCountPrice.setText("¥："+countPrice);
+        dishesNum[id]--;
     }
 }

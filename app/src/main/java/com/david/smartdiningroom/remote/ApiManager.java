@@ -2,6 +2,7 @@ package com.david.smartdiningroom.remote;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -25,6 +26,22 @@ public class ApiManager {
 
     public Flowable<JsonObject> getStoreList(@NonNull Map<String,Object> params){
         return smartService.getStoreList(params);
+    }
+
+    public Flowable<JsonArray> getShopDetails(@NonNull Map<String,Object> params){
+        return smartService.getShopDetails(params);
+    }
+
+    public Flowable<JsonObject> submitOrder(@NonNull String json){
+        return smartService.submitOrder(parseJson(json));
+    }
+
+    public Flowable<JsonObject> getOrderList(@NonNull Map<String,Object> params){
+        return smartService.getOrderList(params);
+    }
+
+    public Flowable<JsonObject> getOrderDetails(@NonNull Map<String,Object> params){
+        return smartService.getOrderDetails(params);
     }
 
     public Flowable<JsonObject> alterOrderStatus(@NonNull String json){

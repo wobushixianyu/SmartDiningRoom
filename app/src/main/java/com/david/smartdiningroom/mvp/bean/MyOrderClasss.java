@@ -24,6 +24,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MyOrderClasss extends AbstractItem<MyOrderClasss,MyOrderClasss.ViewHolder>{
 
     /**
+     * id : 0
      * order_id : 201804241104abc0101
      * time : 1524539083000
      * shop_id : 1001
@@ -40,6 +41,7 @@ public class MyOrderClasss extends AbstractItem<MyOrderClasss,MyOrderClasss.View
     private String shop_name;
     private double price;
     private int status;
+    private int id;
 
     public String getOrder_id() {
         return order_id;
@@ -111,6 +113,14 @@ public class MyOrderClasss extends AbstractItem<MyOrderClasss,MyOrderClasss.View
     @Override
     public int getLayoutRes() {
         return R.layout.item_my_order_list;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

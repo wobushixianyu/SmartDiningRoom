@@ -24,6 +24,8 @@ import com.david.smartdiningroom.mvp.bean.StoreBeanClasss;
 import com.david.smartdiningroom.mvp.presenter.HomeFragmentPresenter;
 import com.david.smartdiningroom.mvp.view.HomeFragmentView;
 import com.david.smartdiningroom.mvp.view.activity.ShopDetailsActivity;
+import com.david.smartdiningroom.remote.ApiManager;
+import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
@@ -46,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,6 +59,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.OnSliderClickListener {
 
@@ -74,12 +78,16 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
     private FastAdapter mFastAdapter;
     private ItemAdapter<StoreBeanClasss> itemAdapter;
     private ItemAdapter<HomePageHeaderView> headerAdapter;
+    private ApiManager apiManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment_layout, container, false);
         ButterKnife.bind(this, view);
+
+        apiManager = new ApiManager();
+
         setupStoreClasss(savedInstanceState);
         initView();
         return view;
@@ -90,9 +98,6 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                pageIndex = 1;
-                params.put("sortMethod", sortMethod);
-                params.put("pageIndex", pageIndex);
                 getHttpData(false);
             }
         }, 1500);
@@ -105,9 +110,6 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
                     public void run() {
                         System.out.println("======>onRefresh");
                         footerAdapter.clear();
-                        pageIndex = 1;
-                        params.put("sortMethod", sortMethod);
-                        params.put("pageIndex", pageIndex);
                         getHttpData(false);
                     }
                 }, 1500);
@@ -148,10 +150,6 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    System.out.println("======>onLoadMore");
-                                    pageIndex++;
-                                    params.put("sortMethod", sortMethod);
-                                    params.put("pageIndex", pageIndex);
                                     getHttpData(true);
                                 }
                             }, 1500);
@@ -167,7 +165,10 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
             public boolean onClick(View v, IAdapter adapter, IItem item, int position) {
                 StoreBeanClasss beanClasss = itemAdapter.getAdapterItem(position - 1);
                 Map<String,Serializable> params = new HashMap<>();
-                params.put("storeId",beanClasss.getId());
+                params.put("shopId",beanClasss.getShop_id());
+                params.put("shopName",beanClasss.getName());
+                params.put("shopAddress",beanClasss.getAddress());
+                params.put("shopLogo",beanClasss.getImg());
                 AppManager.jump(ShopDetailsActivity.class,params);
                 return false;
             }
@@ -220,60 +221,47 @@ public class HomeFragment2 extends BaseFragment implements HomePageHeaderView.On
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        System.out.println("======>onDestroy");
-    }
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mFastAdapter.saveInstanceState(outState);
     }
 
     private void getHttpData(final boolean isLoadMore){
-        Observable.create(new ObservableOnSubscribe<JsonObject>() {
+        if (isLoadMore){
+            pageIndex++;
+        }else {
+            pageIndex = 1;
+        }
+
+        Map<String,Object> params = new HashMap<>();
+        params.put("pageIndex",pageIndex);
+        params.put("type","0");
+        apiManager.getStoreList(params).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
-            public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
-                JsonObject jsonObject = SdrUtils.readAssets(Objects.requireNonNull(getContext()), "storeSalesPage1.txt");
-                System.out.println("======>jsonObject:"+jsonObject);
-                emitter.onNext(jsonObject);
-                emitter.onComplete();
+            public void onSuccess(JsonObject jsonObject) {
+                if (!isLoadMore) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+                JsonArray data = jsonObject.get("list").getAsJsonArray();
+                List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data, new TypeToken<List<StoreBeanClasss>>() {
+                }.getType());
+                setData(storeBeanClassses, !isLoadMore);
+                headerAdapter.clear();
+                headerAdapter.add(new HomePageHeaderView(getContext(), HomeFragment2.this));
             }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JsonObject>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
 
-                    }
+            @Override
+            public void onFailure(Throwable t) {
+                endlessRecyclerViewScrollListener.resetState(false);
+                footerAdapter.clear();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
 
-                    @Override
-                    public void onNext(JsonObject jsonObject) {
-                        if (!isLoadMore) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                        JsonArray data = jsonObject.get("data").getAsJsonArray();
-                        List<StoreBeanClasss> storeBeanClassses = new Gson().fromJson(data, new TypeToken<List<StoreBeanClasss>>() {
-                        }.getType());
-                        setData(storeBeanClassses, !isLoadMore);
-                        headerAdapter.clear();
-                        headerAdapter.add(new HomePageHeaderView(getContext(), HomeFragment2.this));
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        footerAdapter.clear();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+            @Override
+            public void onCompleted() {
+                endlessRecyclerViewScrollListener.resetState(false);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 }

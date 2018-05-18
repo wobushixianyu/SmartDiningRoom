@@ -40,6 +40,15 @@ public class SellerOrderClasss extends AbstractItem<SellerOrderClasss,SellerOrde
     private String shop_name;
     private double price;
     private int status;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getOrder_id() {
         return order_id;

@@ -1,9 +1,5 @@
 package com.david.smartdiningroom.remote;
 
-
-
-import com.david.smartdiningroom.BuildConfig;
-
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -19,11 +15,11 @@ public class AuthInterceptor implements Interceptor {
 
         if (oldRequest.url().toString().contains("?")){
             newRequest = oldRequest.newBuilder()
-                    .url(oldRequest.url().toString() + "&apikey=" + BuildConfig.BANGUMI_APP_KEY)
+                    .url(oldRequest.url().toString())
                     .build();
         }else {
             newRequest = oldRequest.newBuilder()
-                    .url(oldRequest.url().toString() + "?apikey=" + BuildConfig.BANGUMI_APP_KEY)
+                    .url(oldRequest.url().toString())
                     .build();
         }
 
