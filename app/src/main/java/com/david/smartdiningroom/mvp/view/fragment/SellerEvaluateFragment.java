@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.EvaluateClasss;
+import com.david.smartdiningroom.remote.ApiManager;
+import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
 import com.david.smartdiningroom.widget.scroll.EndlessRecyclerViewScrollListener;
@@ -31,7 +33,9 @@ import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -55,11 +59,15 @@ public class SellerEvaluateFragment extends Fragment{
     private FastAdapter mFastAdapter;
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
     private int pageIndex = 1;
+    private ApiManager apiManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.seller_evaluate_fragment_layout,container,false);
+
+        apiManager = new ApiManager();
+
         ButterKnife.bind(this,view);
         setUpEvaluateClasss(savedInstanceState);
         initView();
@@ -71,7 +79,6 @@ public class SellerEvaluateFragment extends Fragment{
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                pageIndex = 1;
                 getHttpData(false);
             }
         }, 1500);
@@ -82,9 +89,7 @@ public class SellerEvaluateFragment extends Fragment{
                 mRecyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("======>onRefresh");
                         footerAdapter.clear();
-                        pageIndex = 1;
                         getHttpData(false);
                     }
                 }, 1500);
@@ -124,8 +129,6 @@ public class SellerEvaluateFragment extends Fragment{
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    System.out.println("======>onLoadMore");
-                                    pageIndex++;
                                     getHttpData(true);
                                 }
                             }, 1500);
@@ -141,7 +144,7 @@ public class SellerEvaluateFragment extends Fragment{
     }
 
     private void getHttpData(final boolean isLoadMore) {
-        Observable.create(new ObservableOnSubscribe<JsonObject>() {
+        /*Observable.create(new ObservableOnSubscribe<JsonObject>() {
             @Override
             public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
                 JsonObject jsonObject = SdrUtils.readAssets(Objects.requireNonNull(getContext()), "evaluate_list.txt");
@@ -182,7 +185,38 @@ public class SellerEvaluateFragment extends Fragment{
                         endlessRecyclerViewScrollListener.resetState(false);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                });
+                });*/
+        if (isLoadMore){
+            pageIndex++;
+        }else {
+            pageIndex = 1;
+        }
+        Map<String,Object> params = new HashMap<>();
+        params.put("shop_id",1);
+        params.put("pageIndex",pageIndex);
+        apiManager.getEvaluationList(params).subscribe(new SubscriberCallBack<JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject jsonObject) {
+                JsonObject data = jsonObject.get("data").getAsJsonObject();
+                JsonArray list = data.get("list").getAsJsonArray();
+                List<EvaluateClasss> mEvaluateClasss = new Gson().fromJson(list, new TypeToken<List<EvaluateClasss>>() {
+                }.getType());
+                setData(mEvaluateClasss, !isLoadMore);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                endlessRecyclerViewScrollListener.resetState(false);
+                footerAdapter.clear();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onCompleted() {
+                endlessRecyclerViewScrollListener.resetState(false);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void setData(List<EvaluateClasss> mEvaluateClasss, boolean isRefresh) {

@@ -9,11 +9,7 @@ import android.widget.TextView;
 
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.utils.SdrUtils;
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.items.AbstractItem;
-import com.mikepenz.fastadapter.listeners.ClickEventHook;
-import com.mikepenz.fastadapter.utils.EventHookUtil;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -24,6 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SellerOrderClasss extends AbstractItem<SellerOrderClasss,SellerOrderClasss.ViewHolder>{
 
     /**
+     * user_id : 18280108248
      * order_id : 201804241104abc0101
      * time : 1524539083000
      * shop_id : 1001
@@ -41,6 +38,7 @@ public class SellerOrderClasss extends AbstractItem<SellerOrderClasss,SellerOrde
     private double price;
     private int status;
     private int id;
+    private String user_id;
 
     public int getId() {
         return id;
@@ -122,6 +120,14 @@ public class SellerOrderClasss extends AbstractItem<SellerOrderClasss,SellerOrde
         return R.layout.item_my_order_list;
     }
 
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder{
         protected View view;
 
@@ -153,7 +159,7 @@ public class SellerOrderClasss extends AbstractItem<SellerOrderClasss,SellerOrde
         super.bindView(holder, payloads);
         holder.mImgLogo.setVisibility(View.GONE);
         holder.mTvTime.setText(SdrUtils.formatDate(getTime()));
-        holder.mTvName.setVisibility(View.GONE);
+        holder.mTvName.setText("客户电话:"+getUser_id());
         holder.mTvOrderId.setText("订单号："+getOrder_id());
         holder.mTvPrice.setText("¥"+getPrice());
         switch (getStatus()){
@@ -184,7 +190,7 @@ public class SellerOrderClasss extends AbstractItem<SellerOrderClasss,SellerOrde
         holder.mTvOrderId.setText("");
         holder.mTvPrice.setText("");
         holder.mTvStatus.setText("");
-        holder.mTvName.setVisibility(View.GONE);
+        holder.mTvName.setText("");
         holder.mImgLogo.setVisibility(View.GONE);
     }
 }

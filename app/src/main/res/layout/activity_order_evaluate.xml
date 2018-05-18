@@ -11,6 +11,7 @@
     <include layout="@layout/toolbar_layout"/>
 
     <EditText
+        android:id="@+id/et_content"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_margin="15dp"

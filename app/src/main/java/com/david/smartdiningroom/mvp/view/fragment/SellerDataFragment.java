@@ -21,6 +21,8 @@ import android.widget.AdapterView;
 
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.DataBeanClasss;
+import com.david.smartdiningroom.remote.ApiManager;
+import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -29,7 +31,9 @@ import com.google.gson.reflect.TypeToken;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,11 +56,16 @@ public class SellerDataFragment extends Fragment {
     AppCompatSpinner mSpinner;
     private ItemAdapter<DataBeanClasss> itemAdapter;
     private FastAdapter mFastAdapter;
+    private ApiManager apiManager;
+    private String month;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.seller_data_fragment_layout, container, false);
+
+        apiManager = new ApiManager();
+
         ButterKnife.bind(this, view);
         setUpDataBeanClasss(savedInstanceState);
         initView();
@@ -67,6 +76,7 @@ public class SellerDataFragment extends Fragment {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                month = position < 10 ? "0"+(position+1) : ""+position+1;
                 mSwipeRefreshLayout.setRefreshing(true);
                 mRecyclerView.postDelayed(new Runnable() {
                     @Override
@@ -114,7 +124,7 @@ public class SellerDataFragment extends Fragment {
     }
 
     private void getHttpData() {
-        Timber.e("======>getHttpData");
+        /*Timber.e("======>getHttpData");
         Observable.create(new ObservableOnSubscribe<JsonObject>() {
             @Override
             public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
@@ -149,7 +159,28 @@ public class SellerDataFragment extends Fragment {
                     public void onComplete() {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                });
+                });*/
+        Map<String,Object> params = new HashMap<>();
+        params.put("shop_id",1);
+        params.put("time","2018"+month);
+        apiManager.getStatistics(params).subscribe(new SubscriberCallBack<JsonArray>() {
+            @Override
+            public void onSuccess(JsonArray jsonArray) {
+                List<DataBeanClasss> mDataBeanClasss = new Gson().fromJson(jsonArray, new TypeToken<List<DataBeanClasss>>() {
+                }.getType());
+                setData(mDataBeanClasss);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onCompleted() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void setData(List<DataBeanClasss> mDataBeanClasss) {

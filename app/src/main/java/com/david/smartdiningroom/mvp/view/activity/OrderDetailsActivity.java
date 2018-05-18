@@ -22,6 +22,7 @@ import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.OrderDetailsClasss;
 import com.david.smartdiningroom.remote.ApiManager;
 import com.david.smartdiningroom.remote.SubscriberCallBack;
+import com.david.smartdiningroom.utils.AppManager;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -29,6 +30,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.HashMap;
 import java.util.List;
@@ -235,22 +237,28 @@ public class OrderDetailsActivity extends AppCompatActivity {
     }
 
     private void alterOrderStatus() {
-        JsonObject json = new JsonObject();
-        json.addProperty("order_id",orderId);
+        Map<String,Object> params = new HashMap<>();
+        params.put("order_id",orderId);
         if (status == 1){
-            json.addProperty("status",2);
+            params.put("status",2);
         }else if (status == 2){
-            json.addProperty("status",3);
+            params.put("status",3);
         }
-        apiManager.alterOrderStatus(json.toString()).subscribe(new SubscriberCallBack<JsonObject>() {
+        apiManager.alterOrderStatus(params).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
             public void onSuccess(JsonObject jsonObject) {
-
+                if (jsonObject.get("return_code").getAsInt() == 200){
+                    SdrUtils.showToast(OrderDetailsActivity.this,"成功");
+                    Hawk.put("changeStatus",true);
+                    OrderDetailsActivity.this.finish();
+                }else {
+                    SdrUtils.showToast(OrderDetailsActivity.this,"失败");
+                }
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                SdrUtils.showToast(OrderDetailsActivity.this,"失败");
             }
 
             @Override

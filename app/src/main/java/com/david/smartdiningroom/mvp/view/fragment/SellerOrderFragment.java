@@ -37,6 +37,7 @@ import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -151,48 +152,6 @@ public class SellerOrderFragment extends Fragment implements OnClickListener {
     }
 
     private void getHttpData(final boolean isLoadMore) {
-        /*Observable.create(new ObservableOnSubscribe<JsonObject>() {
-            @Override
-            public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
-                JsonObject jsonObject = SdrUtils.readAssets(getContext(), "my_order_list.txt");
-                System.out.println("======>jsonObject:"+jsonObject);
-                emitter.onNext(jsonObject);
-                emitter.onComplete();
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JsonObject>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(JsonObject jsonObject) {
-                        if (!isLoadMore) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                        JsonObject data = jsonObject.get("data").getAsJsonObject();
-                        JsonArray list = data.get("list").getAsJsonArray();
-                        List<SellerOrderClasss> mMyOrderClasss = new Gson().fromJson(list, new TypeToken<List<SellerOrderClasss>>() {
-                        }.getType());
-                        setData(mMyOrderClasss, !isLoadMore);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        footerAdapter.clear();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });*/
         if (isLoadMore){
             pageIndex++;
         }else {
@@ -200,7 +159,7 @@ public class SellerOrderFragment extends Fragment implements OnClickListener {
         }
         Map<String,Object> params = new HashMap<>();
         params.put("shop_id",1);
-        params.put("user_id",0);
+        params.put("user_id","");
         params.put("pageIndex",pageIndex);
         apiManager.getOrderList(params).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
@@ -275,5 +234,14 @@ public class SellerOrderFragment extends Fragment implements OnClickListener {
         params.put("price",adapterItem.getPrice());
         AppManager.jump(OrderDetailsActivity.class,params);
         return false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Hawk.get("changeStatus",false)){
+            getHttpData(false);
+            Hawk.put("changeStatus",false);
+        }
     }
 }

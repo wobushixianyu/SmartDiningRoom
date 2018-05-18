@@ -2,6 +2,7 @@ package com.david.smartdiningroom.mvp.view.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +19,8 @@ import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.EvaluateClasss;
 import com.david.smartdiningroom.mvp.bean.StoreBeanClasss;
 import com.david.smartdiningroom.mvp.view.fragment.HomeFragment2;
+import com.david.smartdiningroom.remote.ApiManager;
+import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
 import com.david.smartdiningroom.widget.HomePageHeaderView;
@@ -31,7 +34,9 @@ import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -60,11 +65,16 @@ public class EvaluateListActivity extends AppCompatActivity {
     private EndlessRecyclerViewScrollListener endlessRecyclerViewScrollListener;
     private int pageIndex = 1;
     private Context mContext = this;
+    private ApiManager apiManager;
+    private int shopId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evaluate_list);
+
+        apiManager = new ApiManager();
+
         ButterKnife.bind(this);
         mToolBar.setTitle("用户评价");
         setUpEvaluateClasss(savedInstanceState);
@@ -72,11 +82,12 @@ public class EvaluateListActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        Intent intent = getIntent();
+        shopId = intent.getIntExtra("shopId", 0);
         mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                pageIndex = 1;
                 getHttpData(false);
             }
         }, 1500);
@@ -87,9 +98,7 @@ public class EvaluateListActivity extends AppCompatActivity {
                 mRecyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("======>onRefresh");
                         footerAdapter.clear();
-                        pageIndex = 1;
                         getHttpData(false);
                     }
                 }, 1500);
@@ -130,7 +139,6 @@ public class EvaluateListActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     System.out.println("======>onLoadMore");
-                                    pageIndex++;
                                     getHttpData(true);
                                 }
                             }, 1500);
@@ -146,7 +154,7 @@ public class EvaluateListActivity extends AppCompatActivity {
     }
 
     private void getHttpData(final boolean isLoadMore) {
-        Observable.create(new ObservableOnSubscribe<JsonObject>() {
+        /*Observable.create(new ObservableOnSubscribe<JsonObject>() {
             @Override
             public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
                 JsonObject jsonObject = SdrUtils.readAssets(Objects.requireNonNull(mContext), "evaluate_list.txt");
@@ -189,7 +197,40 @@ public class EvaluateListActivity extends AppCompatActivity {
                         endlessRecyclerViewScrollListener.resetState(false);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                });
+                });*/
+        if (isLoadMore){
+            pageIndex++;
+        }else {
+            pageIndex = 1;
+        }
+        Map<String,Object> params = new HashMap<>();
+        params.put("shop_id",shopId);
+        params.put("pageIndex",pageIndex);
+        apiManager.getEvaluationList(params).subscribe(new SubscriberCallBack<JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject jsonObject) {
+                JsonObject data = jsonObject.get("data").getAsJsonObject();
+                String countNum = data.get("count_num").getAsString();
+                mToolBar.setTitle("用户评价("+countNum+")");
+                JsonArray list = data.get("list").getAsJsonArray();
+                List<EvaluateClasss> mEvaluateClasss = new Gson().fromJson(list, new TypeToken<List<EvaluateClasss>>() {
+                }.getType());
+                setData(mEvaluateClasss, !isLoadMore);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                endlessRecyclerViewScrollListener.resetState(false);
+                footerAdapter.clear();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onCompleted() {
+                endlessRecyclerViewScrollListener.resetState(false);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void setData(List<EvaluateClasss> mEvaluateClasss, boolean isRefresh) {

@@ -66,11 +66,9 @@ public class LoginActivity extends BaseActivity implements LoginView {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.customer_login:
-                        SdrUtils.showToast(mContext, "客户版");
                         Hawk.put(ContentsUtils.LOGIN_TYPE, 0);
                         break;
                     case R.id.seller_login:
-                        SdrUtils.showToast(mContext, "商家版");
                         Hawk.put(ContentsUtils.LOGIN_TYPE, 1);
                         break;
                 }
@@ -109,15 +107,9 @@ public class LoginActivity extends BaseActivity implements LoginView {
     @Override
     public void showSuccessMsg(UserBean userBean) {
         Hawk.put(ContentsUtils.CUSTOMER_LOGIN_NAME, getUserName());
-        if (Hawk.get(ContentsUtils.LOGIN_TYPE, 0) == 0) {
-            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD, getPassWord());
-            Hawk.put(ContentsUtils.LOGIN_SUCCESS, true);
-            AppManager.jumpAndFinish(MainActivity.class);
-        } else {
-            Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD, "");
-            Hawk.put(ContentsUtils.LOGIN_SUCCESS, false);
-            AppManager.jumpAndFinish(SellerMainActivity.class);
-        }
+        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD, getPassWord());
+        Hawk.put(ContentsUtils.LOGIN_SUCCESS, true);
+        AppManager.jumpAndFinish(MainActivity.class);
     }
 
     @Override
@@ -129,7 +121,18 @@ public class LoginActivity extends BaseActivity implements LoginView {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
-                mPresenter.login();
+                if (Hawk.get(ContentsUtils.LOGIN_TYPE, 0) == 0){
+                    mPresenter.login();
+                }else {
+                    if (getUserName().equals("13881711565") && getPassWord().equals("111111")){
+                        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_NAME, getUserName());
+                        Hawk.put(ContentsUtils.CUSTOMER_LOGIN_PWD, "");
+                        Hawk.put(ContentsUtils.LOGIN_SUCCESS, false);
+                        AppManager.jumpAndFinish(SellerMainActivity.class);
+                    }else {
+                        SdrUtils.showToast(this,"请检查您的账号密码是否填写正确");
+                    }
+                }
                 break;
             case R.id.tv_register:
                 AppManager.jump(RegisterActivity.class);

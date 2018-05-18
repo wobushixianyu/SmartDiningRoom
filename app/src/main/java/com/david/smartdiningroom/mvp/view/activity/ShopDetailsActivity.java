@@ -22,6 +22,7 @@ import com.david.smartdiningroom.mvp.bean.ShopDetailsClasss;
 import com.david.smartdiningroom.remote.ApiManager;
 import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.AppManager;
+import com.david.smartdiningroom.utils.ContentsUtils;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -29,8 +30,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
+import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +158,9 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
                 makeSureOrder();
                 break;
             case R.id.tv_evaluate:
-                AppManager.jump(EvaluateListActivity.class);
+                Map<String,Serializable> params = new HashMap<>();
+                params.put("shopId",shopId);
+                AppManager.jump(EvaluateListActivity.class,params);
                 break;
         }
     }
@@ -218,7 +223,7 @@ public class ShopDetailsActivity extends AppCompatActivity implements ShopDetail
         JsonObject json = new JsonObject();
         json.addProperty("shop_id",1);
         json.addProperty("price",countPrice);
-        json.addProperty("user_id",1);
+        json.addProperty("user_id", Hawk.get(ContentsUtils.CUSTOMER_LOGIN_NAME, ""));
         JsonArray menu = new JsonArray();
         for (int i = 0; i < arrayList.size(); i++) {
             if (dishesNum[i] != 0){

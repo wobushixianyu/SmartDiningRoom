@@ -33,6 +33,15 @@ public interface SmartService {
     Flowable<JsonObject> getOrderDetails(@QueryMap Map<String, Object> params);
 
     @Headers({"Content-Type: application/json", "Accept: application/json"})
-    @POST("book/bangumi")
-    Flowable<JsonObject> alterOrderStatus(@Body RequestBody params);
+    @POST("submitEvaluation")
+    Flowable<JsonObject> submitEvaluation(@Body RequestBody params);
+
+    @GET("changeOrderStatus")
+    Flowable<JsonObject> alterOrderStatus(@QueryMap Map<String, Object> params);
+
+    @GET("evaluationList")
+    Flowable<JsonObject> getEvaluationList(@QueryMap Map<String, Object> params);
+
+    @GET("statistics")
+    Flowable<JsonArray> getStatistics(@QueryMap Map<String, Object> params);
 }

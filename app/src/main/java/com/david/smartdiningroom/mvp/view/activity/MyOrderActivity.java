@@ -21,6 +21,7 @@ import com.david.smartdiningroom.mvp.bean.SellerOrderClasss;
 import com.david.smartdiningroom.remote.ApiManager;
 import com.david.smartdiningroom.remote.SubscriberCallBack;
 import com.david.smartdiningroom.utils.AppManager;
+import com.david.smartdiningroom.utils.ContentsUtils;
 import com.david.smartdiningroom.utils.SdrUtils;
 import com.david.smartdiningroom.utils.WeakHandler;
 import com.david.smartdiningroom.widget.scroll.EndlessRecyclerViewScrollListener;
@@ -34,6 +35,7 @@ import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.adapters.ItemAdapter;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -166,48 +168,6 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
     }
 
     private void getHttpData(final boolean isLoadMore) {
-        /*Observable.create(new ObservableOnSubscribe<JsonObject>() {
-            @Override
-            public void subscribe(ObservableEmitter<JsonObject> emitter) throws Exception {
-                JsonObject jsonObject = SdrUtils.readAssets(mContext, "my_order_list.txt");
-                System.out.println("======>jsonObject:"+jsonObject);
-                emitter.onNext(jsonObject);
-                emitter.onComplete();
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JsonObject>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(JsonObject jsonObject) {
-                        if (!isLoadMore) {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                        JsonObject data = jsonObject.get("data").getAsJsonObject();
-                        JsonArray list = data.get("list").getAsJsonArray();
-                        List<MyOrderClasss> mMyOrderClasss = new Gson().fromJson(list, new TypeToken<List<MyOrderClasss>>() {
-                        }.getType());
-                        setData(mMyOrderClasss, !isLoadMore);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        footerAdapter.clear();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        endlessRecyclerViewScrollListener.resetState(false);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });*/
         if (isLoadMore){
             pageIndex++;
         }else {
@@ -215,7 +175,7 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
         }
         Map<String,Object> params = new HashMap<>();
         params.put("shop_id",0);
-        params.put("user_id",1);
+        params.put("user_id",Hawk.get(ContentsUtils.CUSTOMER_LOGIN_NAME, ""));
         params.put("pageIndex",pageIndex);
         apiManager.getOrderList(params).subscribe(new SubscriberCallBack<JsonObject>() {
             @Override
@@ -281,10 +241,19 @@ public class MyOrderActivity extends AppCompatActivity implements MyOrderClasss.
     }
 
     @Override
-    public void onEvaluateClick(String orderId, int shopId) {
+    public void onEvaluateClick(int orderId, int shopId) {
         Map<String,Serializable> params = new HashMap<>();
         params.put("orderId",orderId);
         params.put("shopId",shopId);
         AppManager.jump(OrderEvaluateActivity.class,params);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Hawk.get("evaluate",false)){
+            getHttpData(false);
+            Hawk.put("evaluate",false);
+        }
     }
 }
