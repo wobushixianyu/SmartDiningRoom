@@ -28,7 +28,7 @@ public class HomeFragmentPresenter {
 
     public void getStoreList(Context context, Map<String, Object> params, final boolean isLoadmore){
         homeFragmentView.setupWaitingDialog(true);
-        homeFragmentModel.getHttpData(context,params, new HomeFragmentModel.OnGetStoreListListener() {
+        homeFragmentModel.getHttpData(context.getApplicationContext(),params, new HomeFragmentModel.OnGetStoreListListener() {
             @Override
             public void onSuccess(JsonObject jsonObject) {
                 homeFragmentView.onGetStoreListSuccess(jsonObject,isLoadmore);

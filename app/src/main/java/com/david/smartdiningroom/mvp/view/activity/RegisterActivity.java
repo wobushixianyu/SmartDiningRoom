@@ -71,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
                     String uPwd = mEtPwd.getText().toString();
                     String repeat = mEtRepeat.getText().toString();
                     if (!uPwd.equals(repeat)){
-                        emitter.onNext(102);
+                            emitter.onNext(102);
                     }else{
                         DBUtils dbUtils = DBUtils.getInstance(RegisterActivity.this);
                         if (dbUtils.queryIsExist(uName)){

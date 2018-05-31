@@ -117,7 +117,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
         Snackbar.make(mContainer, msg, Snackbar.LENGTH_SHORT).show();
     }
 
-    @OnClick({R.id.btn_login, R.id.tv_forgetPwd, R.id.tv_register})
+    @OnClick({R.id.btn_login, R.id.tv_register})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:

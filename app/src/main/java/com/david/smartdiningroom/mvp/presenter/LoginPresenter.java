@@ -15,7 +15,7 @@ public class LoginPresenter{
     private static Context mContext;
 
     public static LoginPresenter getInstance(Context context,LoginView loginView){
-        mContext = context;
+        mContext = context.getApplicationContext();
         if (presenter == null){
             return presenter = new LoginPresenter(loginView);
         }
