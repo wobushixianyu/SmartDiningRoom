@@ -6,11 +6,5 @@
     android:background="#eeeeee"
     tools:context=".mvp.view.activity.GuideActivity">
 
-    <com.david.smartdiningroom.widget.toolbar.ToolbarView
-        android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:gravity="center_vertical"
-        android:background="@android:color/white"
-        />
+    <include layout="@layout/toolbar_layout"/>
 </LinearLayout>

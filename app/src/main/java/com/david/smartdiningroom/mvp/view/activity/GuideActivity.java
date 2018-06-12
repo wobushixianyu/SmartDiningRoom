@@ -1,10 +1,14 @@
 package com.david.smartdiningroom.mvp.view.activity;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.david.smartdiningroom.MainActivity;
 import com.david.smartdiningroom.R;
 import com.david.smartdiningroom.mvp.bean.BigHouse;
 import com.david.smartdiningroom.mvp.bean.DishManHouseObserver;
@@ -21,7 +25,10 @@ public class GuideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
-//        AppManager.jumpAndFinish(LoginActivity.class);
+
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.WHITE);
 
         BigHouse bigHouse = new BigHouse(10000);
         DishManHouseObserver dmA = new DishManHouseObserver("张三");
@@ -33,21 +40,6 @@ public class GuideActivity extends AppCompatActivity {
         Timber.e("======>start:"+bigHouse.toString());
         bigHouse.setPrice(15000);
         Timber.e("======>end:"+bigHouse.toString());
-
-        ToolbarView mToolbar = findViewById(R.id.my_toolbar);
-        mToolbar.setTitle("智能管家智能管家智能管家智能管家智能管家智能管家智能管家智能管家");
-        mToolbar.setBackImgButton(R.mipmap.ic_back_toolbar, null);
-        mToolbar.setShareImgBtn(R.mipmap.ic_share_toolbar, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(GuideActivity.this, "分享", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mToolbar.setCloseImgBtn(R.mipmap.ic_close_toolbar, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(GuideActivity.this, "关闭", Toast.LENGTH_SHORT).show();
-            }
-        });
+        AppManager.jumpAndFinish(MainActivity.class);
     }
 }
